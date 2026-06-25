@@ -1,11 +1,12 @@
 import Image from "next/image";
 import Link from "next/link";
-import { existsSync } from "node:fs";
 import Reveal from "@/components/Reveal";
 import SiteLogo from "@/components/SiteLogo";
 import SectionTitle from "@/components/SectionTitle";
 import { DonationForm, TeamForm } from "@/components/Forms";
 import EventCountdown from "@/components/EventCountdown";
+import HomePhotoConstellation from "@/components/HomePhotoConstellation";
+import { getMemorialObjectPosition } from "@/lib/memorial-images";
 import {
   getApprovedGalleryItems,
   getFeaturedTributes,
@@ -23,8 +24,7 @@ export default async function HomePage() {
     getPublicCoordinators(),
     getActiveTeams(),
   ]);
-  const portraitPath = "/images/pa-ndambi-main-portrait.png";
-  const portraitSrc = existsSync(`${process.cwd()}/public${portraitPath}`) ? portraitPath : "/placeholders/portrait.svg";
+  const portraitSrc = "/images/pa-ndambi/pa-ndambi-blue-cutout.png";
   const heroParticles = Array.from({ length: 10 }, (_, index) => index);
 
   return (
@@ -84,11 +84,22 @@ export default async function HomePage() {
               <span className="memorialPlatform" />
             </div>
             <div className="portraitFrame memorialPortraitFrame">
-              <Image src={portraitSrc} alt="Pa Ndambi Paul Angemba" fill priority sizes="(max-width: 720px) 88vw, (max-width: 1080px) 68vw, 40vw" />
+              <Image
+                src={portraitSrc}
+                alt="Portrait of Pa Ndambi Paul Angemba in blue regalia"
+                fill
+                priority
+                sizes="(max-width: 720px) 88vw, (max-width: 1080px) 68vw, 40vw"
+                style={{ objectPosition: getMemorialObjectPosition(portraitSrc) }}
+              />
             </div>
           </div>
         </div>
       </section>
+
+      <Reveal>
+        <HomePhotoConstellation />
+      </Reveal>
 
       <Reveal>
         <section className="section introGrid">
@@ -136,7 +147,13 @@ export default async function HomePage() {
             {featuredGallery.slice(0, 4).map((item) => (
               <article key={item.id} className="previewCard">
                 <div className="previewMedia">
-                  <Image src={item.posterUrl} alt={item.title} fill sizes="(max-width: 900px) 100vw, 25vw" />
+                  <Image
+                    src={item.posterUrl}
+                    alt={item.altText || item.title}
+                    fill
+                    sizes="(max-width: 900px) 100vw, 25vw"
+                    style={{ objectPosition: getMemorialObjectPosition(item.posterUrl) }}
+                  />
                 </div>
                 <div className="previewCopy">
                   <strong>{item.title}</strong>

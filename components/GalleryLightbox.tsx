@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import { useState } from "react";
+import { getMemorialObjectPosition } from "@/lib/memorial-images";
 import type { GalleryItemPublic } from "@/lib/public-types";
 
 export default function GalleryLightbox({ items }: { items: GalleryItemPublic[] }) {
@@ -13,7 +14,13 @@ export default function GalleryLightbox({ items }: { items: GalleryItemPublic[] 
         {items.map((item) => (
           <button key={item.id} className="galleryCard" onClick={() => setActive(item)}>
             <div className="galleryThumb">
-              <Image src={item.posterUrl} alt={item.title} fill sizes="(max-width: 800px) 100vw, 33vw" />
+              <Image
+                src={item.posterUrl}
+                alt={item.altText || item.title}
+                fill
+                sizes="(max-width: 800px) 100vw, 33vw"
+                style={{ objectPosition: getMemorialObjectPosition(item.posterUrl) }}
+              />
               {item.kind === "video" ? <span className="playBadge">Play</span> : null}
             </div>
             <div className="galleryMeta">
@@ -41,7 +48,13 @@ export default function GalleryLightbox({ items }: { items: GalleryItemPublic[] 
               />
             ) : (
               <div className="lightboxImage">
-                <Image src={active.publicUrl} alt={active.title} fill sizes="90vw" />
+                <Image
+                  src={active.publicUrl}
+                  alt={active.altText || active.title}
+                  fill
+                  sizes="90vw"
+                  style={{ objectPosition: getMemorialObjectPosition(active.publicUrl) }}
+                />
               </div>
             )}
             <div className="lightboxCopy">

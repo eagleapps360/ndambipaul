@@ -13,7 +13,12 @@ import {
   demoTributes,
   demoTeams,
 } from "@/lib/demo-content";
+import { getGalleryFallbackImage, normalizeImageUrl } from "@/lib/public-image-fallbacks";
 import { adminSections } from "@/lib/ui-config";
+
+const defaultLivestreamPoster = "/images/pa-ndambi/hero-pa-ndambi-blue-regalia.jpg";
+const defaultTributeImage = "/images/pa-ndambi/pa-ndambi-close-portrait.jpg";
+const defaultOpenGraphImage = "/images/pa-ndambi/hero-pa-ndambi-blue-regalia.jpg";
 
 export type MediaKind = "image" | "video" | "document";
 export type LivestreamState = "scheduled" | "live" | "ended" | "cancelled";
@@ -122,7 +127,7 @@ export const getPublicSiteSettings = cachedQuery(
           : demoSiteSettings.venueInformation,
         livestreamFallbackMessage: row.livestream_fallback_message || demoSiteSettings.livestreamFallbackMessage,
         socialLinks: typeof row.social_links === "object" && row.social_links ? row.social_links : demoSiteSettings.socialLinks,
-        openGraphImage: row.open_graph_image || demoSiteSettings.openGraphImage,
+        openGraphImage: normalizeImageUrl(row.open_graph_image || demoSiteSettings.openGraphImage, defaultOpenGraphImage),
         familyContacts:
           typeof row.public_family_contacts === "object" && row.public_family_contacts
             ? row.public_family_contacts
@@ -243,7 +248,7 @@ export async function getApprovedTributesUncached(): Promise<Tribute[]> {
       name: row.contributor_name,
       location: row.location,
       message: row.tribute_message,
-      profileImageUrl: row.profile_media_url,
+      profileImageUrl: normalizeImageUrl(row.profile_media_url, defaultTributeImage),
       submittedAt: row.created_at,
       publishedAt: row.published_at,
       privateEmail: "",
@@ -290,7 +295,7 @@ export async function getTributeBySlug(slug: string): Promise<Tribute | null> {
       name: data.contributor_name,
       location: data.location,
       message: data.tribute_message,
-      profileImageUrl: data.profile_media_url,
+      profileImageUrl: normalizeImageUrl(data.profile_media_url, defaultTributeImage),
       submittedAt: data.created_at,
       publishedAt: data.published_at,
       privateEmail: "",
@@ -316,7 +321,7 @@ export async function getPublishedGalleryUncached(): Promise<MediaItem[]> {
       .order("featured", { ascending: false })
       .order("display_order", { ascending: true });
     if (error) throw error;
-    const mapped = (data || []).map((row) => ({
+    const mapped = (data || []).map((row, index) => ({
       id: row.id,
       tributeId: row.tribute_id,
       albumSlug: row.gallery_album_slug,
@@ -328,8 +333,8 @@ export async function getPublishedGalleryUncached(): Promise<MediaItem[]> {
       altText: row.alt_text || row.caption || row.title || "",
       contributor: row.contributor_name,
       date: row.published_at || row.created_at,
-      posterUrl: row.poster_url || row.thumbnail_url || row.original_url,
-      publicUrl: row.original_url,
+      posterUrl: normalizeImageUrl(row.poster_url || row.thumbnail_url || row.original_url, getGalleryFallbackImage(index)),
+      publicUrl: normalizeImageUrl(row.original_url || row.poster_url || row.thumbnail_url, getGalleryFallbackImage(index)),
       approved: true,
       featured: row.featured,
       mimeType: row.mime_type,
@@ -449,7 +454,7 @@ export const getPublishedLivestreams = cachedQuery(
           externalUrl: row.external_url,
           recordingUrl: row.recording_url,
           backupMessage: row.backup_message,
-          posterUrl: row.poster_url || "/placeholders/live-poster.svg",
+          posterUrl: normalizeImageUrl(row.poster_url, defaultLivestreamPoster),
         }),
         startsAt: row.scheduled_start,
         actualStartAt: row.actual_start,
@@ -459,7 +464,7 @@ export const getPublishedLivestreams = cachedQuery(
         externalUrl: row.external_url,
         recordingUrl: row.recording_url,
         backupMessage: row.backup_message,
-        posterUrl: row.poster_url || "/placeholders/live-poster.svg",
+        posterUrl: normalizeImageUrl(row.poster_url, defaultLivestreamPoster),
       }));
     } catch (error) {
       logPublicLoaderError("Failed to load published livestreams", error);

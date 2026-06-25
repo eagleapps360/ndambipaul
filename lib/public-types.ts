@@ -23,6 +23,7 @@ export type GalleryItemPublic = {
   kind: string;
   title: string;
   caption: string;
+  altText?: string;
   contributor: string;
   date: string;
   posterUrl: string;

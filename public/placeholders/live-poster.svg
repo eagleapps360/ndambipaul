@@ -1,0 +1,6 @@
+<svg width="1280" height="720" viewBox="0 0 1280 720" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="1280" height="720" fill="#0B1A2C"/>
+  <circle cx="640" cy="360" r="112" fill="#C8A96A"/>
+  <path d="M602 302L724 360L602 418V302Z" fill="#0B1A2C"/>
+  <text x="640" y="610" text-anchor="middle" fill="#FFF9F0" font-family="Georgia, serif" font-size="46">Livestream Placeholder</text>
+</svg>

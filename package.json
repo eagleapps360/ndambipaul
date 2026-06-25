@@ -1,0 +1,40 @@
+{
+  "name": "pa-ndambi-memorial",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "node server.js",
+    "lint": "eslint . --ext .ts,.tsx",
+    "typecheck": "tsc --noEmit",
+    "test": "tsx --test tests/**/*.test.ts",
+    "setup:supabase": "tsx scripts/setup-supabase.ts",
+    "create:owner": "tsx scripts/create-owner.ts",
+    "verify:supabase": "tsx scripts/verify-supabase.ts",
+    "verify:storage": "tsx scripts/verify-storage.ts",
+    "verify:stripe": "tsx scripts/verify-stripe.ts"
+  },
+  "dependencies": {
+    "@supabase/ssr": "^0.12.0",
+    "@supabase/supabase-js": "^2.108.2",
+    "@uppy/core": "^5.2.0",
+    "@uppy/dashboard": "^5.1.1",
+    "@uppy/tus": "^5.1.1",
+    "next": "latest",
+    "react": "latest",
+    "react-dom": "latest",
+    "server-only": "^0.0.1",
+    "stripe": "latest",
+    "zod": "^4.4.3"
+  },
+  "devDependencies": {
+    "@types/node": "latest",
+    "@types/react": "latest",
+    "@types/react-dom": "latest",
+    "eslint": "^9.30.1",
+    "eslint-config-next": "^16.2.9",
+    "tsx": "^4.20.3",
+    "typescript": "latest"
+  }
+}

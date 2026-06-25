@@ -1,0 +1,8 @@
+<svg width="1200" height="900" viewBox="0 0 1200 900" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="1200" height="900" fill="#F5EFE4"/>
+  <rect x="68" y="68" width="1064" height="764" rx="36" fill="#10243D"/>
+  <rect x="170" y="180" width="860" height="420" rx="28" fill="#C8A96A"/>
+  <circle cx="350" cy="390" r="86" fill="#FFFDFA"/>
+  <circle cx="846" cy="390" r="110" fill="#173558"/>
+  <text x="600" y="732" text-anchor="middle" fill="#FFFDFA" font-family="Georgia, serif" font-size="40">Family Celebration Placeholder</text>
+</svg>

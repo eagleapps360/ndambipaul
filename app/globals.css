@@ -1,0 +1,2479 @@
+@import url("https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Manrope:wght@400;500;600;700&display=swap");
+
+:root {
+  --memorial-white: #ffffff;
+  --memorial-soft-white: #f8f7f3;
+  --memorial-black: #080808;
+  --memorial-soft-black: #171717;
+  --memorial-gold: #c9a44c;
+  --memorial-light-gold: #e7cf8a;
+  --memorial-deep-gold: #9b7623;
+  --navy-950: #081524;
+  --navy-900: #10243d;
+  --navy-800: #173558;
+  --cream-100: #f5efe4;
+  --cream-200: #e6dcc7;
+  --white: #fffdfa;
+  --gold-500: #c8a96a;
+  --gold-600: #b88d3d;
+  --ink: var(--memorial-soft-black);
+  --muted: rgba(23, 23, 23, 0.68);
+  --line: rgba(155, 118, 35, 0.2);
+  --shadow: 0 30px 70px rgba(8, 8, 8, 0.08);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  color: var(--ink);
+  background:
+    radial-gradient(circle at top left, rgba(201, 164, 76, 0.14), transparent 26%),
+    linear-gradient(180deg, var(--memorial-white) 0%, var(--memorial-soft-white) 100%);
+  font-family: "Manrope", sans-serif;
+}
+
+img {
+  max-width: 100%;
+}
+
+a {
+  color: inherit;
+}
+
+h1,
+h2,
+h3 {
+  margin-top: 0;
+  font-family: "Cormorant Garamond", serif;
+}
+
+p {
+  line-height: 1.75;
+}
+
+.srOnly {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+}
+
+.header {
+  position: sticky;
+  top: 0;
+  z-index: 40;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem 5vw;
+  background: rgba(255, 255, 255, 0.82);
+  backdrop-filter: blur(16px);
+  border-bottom: 1px solid rgba(201, 164, 76, 0.24);
+}
+
+.brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.8rem;
+  font-weight: 700;
+  text-decoration: none;
+  color: var(--memorial-black);
+}
+
+.siteLogoPortrait {
+  display: block;
+  flex-shrink: 0;
+  border-radius: 999px;
+  border: 2px solid var(--memorial-gold);
+  background: var(--memorial-soft-white);
+  object-fit: cover;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+}
+
+.siteLogoText {
+  display: block;
+  font-size: 0.98rem;
+  line-height: 1.15;
+}
+
+.footer .siteLogoText {
+  color: var(--white);
+}
+
+.brandMark {
+  display: grid;
+  place-items: center;
+  width: 2.6rem;
+  height: 2.6rem;
+  border-radius: 999px;
+  border: 1px solid rgba(201, 164, 76, 0.55);
+  color: var(--memorial-deep-gold);
+  background: rgba(255, 255, 255, 0.7);
+  font-family: "Cormorant Garamond", serif;
+  font-size: 1.2rem;
+}
+
+.menu {
+  display: none;
+  border: 1px solid rgba(201, 164, 76, 0.28);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.72);
+  color: var(--memorial-black);
+  padding: 0.7rem 1rem;
+}
+
+.nav {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.nav a {
+  color: rgba(8, 8, 8, 0.76);
+  text-decoration: none;
+  font-size: 0.92rem;
+}
+
+.nav a.active,
+.nav a:hover {
+  color: var(--memorial-deep-gold);
+}
+
+.hero,
+.pageHero {
+  position: relative;
+  overflow: hidden;
+}
+
+.hero {
+  display: grid;
+  grid-template-columns: minmax(0, 1.2fr) minmax(320px, 0.8fr);
+  gap: 4rem;
+  align-items: center;
+  min-height: calc(100vh - 84px);
+  padding: 5rem 7vw;
+  background:
+    linear-gradient(135deg, rgba(8, 21, 36, 0.98), rgba(23, 53, 88, 0.94)),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.03), transparent);
+  color: var(--white);
+}
+
+.memorialHero {
+  min-height: calc(100vh - 84px);
+  padding: 4.5rem 7vw 2rem;
+  background:
+    radial-gradient(circle at 18% 18%, rgba(231, 207, 138, 0.26), transparent 24%),
+    radial-gradient(circle at 88% 24%, rgba(201, 164, 76, 0.16), transparent 22%),
+    linear-gradient(180deg, var(--memorial-white) 0%, var(--memorial-soft-white) 100%);
+  color: var(--memorial-black);
+}
+
+.memorialBackground,
+.memorialPortraitStage {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.memorialBackground {
+  z-index: 0;
+}
+
+.memorialHeroContent {
+  display: grid;
+  grid-template-columns: minmax(0, 1.02fr) minmax(320px, 0.98fr);
+  gap: 4rem;
+  align-items: center;
+  width: 100%;
+}
+
+.memorialHeroCopy,
+.memorialHeroPortrait {
+  position: relative;
+  z-index: 2;
+}
+
+.memorialHeroCopy {
+  display: grid;
+  gap: 1.2rem;
+  max-width: 42rem;
+}
+
+.memorialKicker,
+.memorialHeadingIntro,
+.memorialSubtitle,
+.memorialMeta,
+.memorialActions,
+.memorialSecondaryActions,
+.scrollIndicator,
+.memorialPortraitFrame,
+.memorialCorner,
+.memorialLine {
+  opacity: 0;
+  animation: memorial-fade-up 900ms cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+}
+
+.memorialKicker {
+  color: var(--memorial-deep-gold);
+  animation-delay: 180ms;
+}
+
+.memorialLine {
+  position: absolute;
+  top: 8.2rem;
+  left: 7vw;
+  width: min(7rem, 18vw);
+  height: 1px;
+  background: linear-gradient(90deg, var(--memorial-gold), rgba(201, 164, 76, 0));
+  transform-origin: left center;
+  animation:
+    memorial-line-draw 900ms ease forwards,
+    memorial-appear 900ms ease forwards;
+}
+
+.memorialHeading {
+  display: grid;
+  gap: 0.55rem;
+  margin: 0;
+  color: var(--memorial-black);
+}
+
+.memorialHeadingIntro {
+  display: block;
+  font-size: clamp(2.7rem, 5vw, 4.8rem);
+  line-height: 0.98;
+  animation-delay: 320ms;
+}
+
+.memorialHeadingName {
+  display: block;
+  opacity: 0;
+  font-size: clamp(3.5rem, 7vw, 6.6rem);
+  line-height: 0.92;
+  color: var(--memorial-black);
+  background: linear-gradient(120deg, var(--memorial-black) 0%, var(--memorial-black) 40%, var(--memorial-light-gold) 50%, var(--memorial-black) 60%, var(--memorial-black) 100%);
+  background-size: 220% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  animation:
+    memorial-fade-up 1000ms cubic-bezier(0.2, 0.8, 0.2, 1) 420ms forwards,
+    memorial-shimmer 2400ms ease 1100ms 1 forwards,
+    memorial-shimmer 9000ms ease 9s infinite;
+}
+
+.memorialSubtitle {
+  max-width: 32rem;
+  font-size: 1.22rem;
+  color: rgba(23, 23, 23, 0.76);
+  animation-delay: 600ms;
+}
+
+.memorialMeta {
+  display: grid;
+  gap: 0.55rem;
+  animation-delay: 760ms;
+}
+
+.memorialDates,
+.memorialFuneralLine {
+  margin: 0;
+}
+
+.memorialDates {
+  color: var(--memorial-deep-gold);
+  font-size: 0.9rem;
+  letter-spacing: 0.18em;
+}
+
+.memorialFuneralLine {
+  font-size: 1rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: rgba(8, 8, 8, 0.82);
+}
+
+.memorialActions {
+  margin-top: 0.6rem;
+  animation-delay: 900ms;
+}
+
+.memorialButton {
+  position: relative;
+  overflow: hidden;
+  border: 1px solid transparent;
+  background: linear-gradient(135deg, var(--memorial-gold), var(--memorial-light-gold));
+  color: var(--memorial-black);
+}
+
+.memorialButton::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(110deg, transparent 20%, rgba(255, 255, 255, 0.46) 48%, transparent 76%);
+  transform: translateX(-140%);
+  transition: transform 500ms ease;
+}
+
+.memorialButton:hover::after,
+.memorialButton:focus-visible::after {
+  transform: translateX(140%);
+}
+
+.memorialButtonGhost {
+  background: rgba(255, 255, 255, 0.58);
+  color: var(--memorial-black);
+  border-color: rgba(201, 164, 76, 0.34);
+}
+
+.memorialSecondaryActions {
+  display: flex;
+  gap: 1.4rem;
+  flex-wrap: wrap;
+  animation-delay: 1020ms;
+}
+
+.memorialSecondaryActions a {
+  position: relative;
+  color: var(--memorial-soft-black);
+  text-decoration: none;
+  font-weight: 700;
+}
+
+.memorialSecondaryActions a::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -0.2rem;
+  height: 1px;
+  background: currentColor;
+  transform: scaleX(0);
+  transform-origin: left center;
+  transition: transform 220ms ease;
+}
+
+.memorialSecondaryActions a:hover::after,
+.memorialSecondaryActions a:focus-visible::after {
+  transform: scaleX(1);
+}
+
+.memorialHeroPortrait {
+  display: grid;
+  place-items: center;
+  min-height: 36rem;
+  opacity: 0;
+  animation: memorial-fade-up 1200ms cubic-bezier(0.2, 0.8, 0.2, 1) 1050ms forwards;
+}
+
+.memorialPortraitFrame {
+  width: min(100%, 34rem);
+  aspect-ratio: 4 / 5.4;
+  overflow: visible;
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
+  animation-delay: 1080ms;
+}
+
+.memorialPortraitFrame img {
+  object-fit: contain !important;
+  object-position: center bottom;
+  filter: drop-shadow(0 18px 22px rgba(8, 8, 8, 0.12));
+  animation: memorial-float 7s ease-in-out 2.1s infinite;
+}
+
+.memorialHalo {
+  position: absolute;
+  inset: 12% 17% 16%;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(231, 207, 138, 0.35) 0%, rgba(201, 164, 76, 0.2) 35%, rgba(201, 164, 76, 0) 72%);
+  filter: blur(20px);
+  animation: memorial-halo 8s ease-in-out infinite;
+}
+
+.memorialRing {
+  position: absolute;
+  left: 50%;
+  top: 48%;
+  border: 1px solid rgba(201, 164, 76, 0.32);
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  opacity: 0.54;
+  animation: memorial-ring 13s ease-in-out infinite;
+}
+
+.memorialRingOne {
+  width: min(90%, 31rem);
+  height: min(72%, 24rem);
+}
+
+.memorialRingTwo {
+  width: min(104%, 36rem);
+  height: min(82%, 28rem);
+  animation-delay: 1.6s;
+}
+
+.memorialRingThree {
+  width: min(74%, 26rem);
+  height: min(58%, 20rem);
+  animation-delay: 2.7s;
+}
+
+.memorialPlatform {
+  position: absolute;
+  left: 50%;
+  bottom: 10%;
+  width: min(58%, 19rem);
+  height: 1.4rem;
+  border-radius: 50%;
+  background:
+    radial-gradient(circle, rgba(201, 164, 76, 0.34) 0%, rgba(201, 164, 76, 0.14) 45%, rgba(201, 164, 76, 0) 74%),
+    linear-gradient(90deg, rgba(201, 164, 76, 0), rgba(201, 164, 76, 0.28), rgba(201, 164, 76, 0));
+  transform: translateX(-50%);
+  filter: blur(4px);
+}
+
+.memorialLight {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(24px);
+}
+
+.memorialLightOne {
+  width: 24rem;
+  height: 24rem;
+  top: -7rem;
+  left: -6rem;
+  background: rgba(231, 207, 138, 0.34);
+  animation: memorial-drift 10s ease-in-out infinite;
+}
+
+.memorialLightTwo {
+  width: 28rem;
+  height: 28rem;
+  right: -8rem;
+  bottom: 1rem;
+  background: rgba(201, 164, 76, 0.16);
+  animation: memorial-drift 12s ease-in-out 1.2s infinite reverse;
+}
+
+.memorialSweep {
+  position: absolute;
+  right: 10%;
+  top: 14%;
+  width: min(32rem, 48vw);
+  height: 72%;
+  background: linear-gradient(115deg, rgba(255, 255, 255, 0) 26%, rgba(231, 207, 138, 0.22) 52%, rgba(255, 255, 255, 0) 76%);
+  filter: blur(18px);
+  transform: translateX(18%);
+  animation: memorial-sweep 11s ease-in-out infinite;
+}
+
+.memorialCorner {
+  position: absolute;
+  width: 7rem;
+  height: 7rem;
+  border-color: rgba(201, 164, 76, 0.45);
+  animation-delay: 850ms;
+}
+
+.memorialCornerTopLeft {
+  top: 4rem;
+  left: 4vw;
+  border-top: 1px solid;
+  border-left: 1px solid;
+}
+
+.memorialCornerBottomRight {
+  right: 4vw;
+  bottom: 3.4rem;
+  border-right: 1px solid;
+  border-bottom: 1px solid;
+}
+
+.memorialParticles {
+  position: absolute;
+  inset: 0;
+}
+
+.memorialParticle {
+  position: absolute;
+  width: 0.3rem;
+  height: 0.3rem;
+  border-radius: 999px;
+  background: rgba(201, 164, 76, 0.58);
+  box-shadow: 0 0 16px rgba(201, 164, 76, 0.24);
+  animation: memorial-particle 9s ease-in-out infinite;
+}
+
+.memorialParticle1 { top: 18%; left: 61%; }
+.memorialParticle2 { top: 28%; left: 73%; width: 0.42rem; height: 0.42rem; animation-delay: 1s; }
+.memorialParticle3 { top: 61%; left: 86%; animation-delay: 2.2s; }
+.memorialParticle4 { top: 76%; left: 67%; width: 0.2rem; height: 0.2rem; animation-delay: 3.1s; }
+.memorialParticle5 { top: 20%; left: 12%; width: 0.22rem; height: 0.22rem; animation-delay: 1.7s; }
+.memorialParticle6 { top: 42%; left: 92%; width: 0.2rem; height: 0.2rem; animation-delay: 0.7s; }
+.memorialParticle7 { top: 84%; left: 18%; width: 0.36rem; height: 0.36rem; animation-delay: 2.8s; }
+.memorialParticle8 { top: 12%; left: 82%; width: 0.18rem; height: 0.18rem; animation-delay: 4s; }
+.memorialParticle9 { top: 54%; left: 58%; width: 0.24rem; height: 0.24rem; animation-delay: 1.3s; }
+.memorialParticle10 { top: 71%; left: 78%; width: 0.16rem; height: 0.16rem; animation-delay: 3.6s; }
+
+.scrollIndicator {
+  display: inline-grid;
+  justify-items: center;
+  gap: 0.65rem;
+  margin-top: 0.9rem;
+  color: var(--memorial-deep-gold);
+  font-size: 0.78rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  animation-delay: 1180ms;
+}
+
+.scrollIndicatorTrack {
+  position: relative;
+  width: 1px;
+  height: 4.8rem;
+  background: rgba(201, 164, 76, 0.4);
+  overflow: hidden;
+}
+
+.scrollIndicatorDot {
+  position: absolute;
+  left: 50%;
+  width: 0.45rem;
+  height: 0.45rem;
+  border-radius: 999px;
+  background: var(--memorial-gold);
+  transform: translateX(-50%);
+  animation: memorial-scroll-dot 2.3s ease-in-out infinite;
+}
+
+.scrollIndicatorArrow {
+  width: 0.65rem;
+  height: 0.65rem;
+  border-right: 1px solid rgba(201, 164, 76, 0.7);
+  border-bottom: 1px solid rgba(201, 164, 76, 0.7);
+  transform: rotate(45deg);
+}
+
+.heroGlow {
+  position: absolute;
+  border-radius: 999px;
+  filter: blur(14px);
+  opacity: 0.55;
+}
+
+.heroGlowOne {
+  width: 22rem;
+  height: 22rem;
+  right: -6rem;
+  top: -5rem;
+  background: rgba(200, 169, 106, 0.4);
+}
+
+.heroGlowTwo {
+  width: 18rem;
+  height: 18rem;
+  left: -4rem;
+  bottom: 2rem;
+  background: rgba(255, 253, 250, 0.12);
+}
+
+.heroContent,
+.heroPortrait,
+.pageHero > * {
+  position: relative;
+  z-index: 2;
+}
+
+.kicker,
+.sectionHead > span {
+  display: inline-block;
+  text-transform: uppercase;
+  letter-spacing: 0.24em;
+  font-size: 0.74rem;
+  font-weight: 700;
+  color: var(--gold-500);
+}
+
+.hero h1,
+.pageHero h1 {
+  font-size: clamp(3.4rem, 7vw, 6.6rem);
+  line-height: 0.95;
+  margin: 1rem 0;
+}
+
+.pageHero {
+  padding: 5rem 7vw 2rem;
+  background:
+    linear-gradient(180deg, rgba(8, 21, 36, 0.98), rgba(16, 36, 61, 0.94)),
+    radial-gradient(circle at top right, rgba(200, 169, 106, 0.18), transparent 35%);
+  color: var(--white);
+}
+
+.pageHero p,
+.subtitle,
+.heroCopy {
+  max-width: 52rem;
+}
+
+.subtitle {
+  font-size: 1.35rem;
+}
+
+.heroCopy {
+  color: rgba(255, 253, 250, 0.82);
+}
+
+.dates {
+  color: var(--cream-200);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  font-size: 0.82rem;
+}
+
+.actions,
+.cardActions,
+.sectionActions,
+.quickLinks {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.actions,
+.quickLinks {
+  margin-top: 1.8rem;
+}
+
+.quickLinks a {
+  padding: 0.7rem 1rem;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.08);
+  text-decoration: none;
+  color: var(--white);
+  font-size: 0.9rem;
+}
+
+.button,
+.textLink,
+.filterOptions a,
+.methodTabs button,
+.adminActions button {
+  transition: transform 180ms ease, background 180ms ease, color 180ms ease, border-color 180ms ease;
+}
+
+.button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  border-radius: 999px;
+  padding: 0.95rem 1.4rem;
+  background: linear-gradient(135deg, var(--gold-500), #e5c88d);
+  color: var(--navy-950);
+  text-decoration: none;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.button:hover,
+.textLink:hover,
+.filterOptions a:hover,
+.methodTabs button:hover,
+.adminActions button:hover {
+  transform: translateY(-2px);
+}
+
+.button:disabled,
+.methodTabs button:disabled,
+.adminActions button:disabled {
+  cursor: not-allowed;
+  opacity: 0.68;
+  transform: none;
+}
+
+.button.ghost {
+  background: transparent;
+  color: var(--white);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+}
+
+.darkButton,
+.button.ghost.darkButton {
+  color: var(--ink);
+  border-color: var(--line);
+}
+
+.button.light {
+  background: var(--white);
+}
+
+.textLink {
+  color: var(--navy-800);
+  font-weight: 700;
+  text-decoration: none;
+}
+
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+  outline: 2px solid var(--memorial-gold);
+  outline-offset: 3px;
+}
+
+.heroPortrait {
+  display: grid;
+  place-items: center;
+}
+
+.portraitFrame {
+  position: relative;
+  width: min(100%, 27rem);
+  aspect-ratio: 4 / 5;
+  overflow: hidden;
+  border-radius: 2rem 2rem 7rem 7rem;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  box-shadow: 0 24px 80px rgba(0, 0, 0, 0.35);
+}
+
+.portraitFrame img,
+.previewMedia img,
+.galleryThumb img,
+.lightboxImage img,
+.detailMedia img {
+  object-fit: cover;
+}
+
+.pageMain {
+  padding-bottom: 5rem;
+}
+
+.section {
+  padding: 5rem 7vw;
+}
+
+.sectionHead {
+  max-width: 48rem;
+  margin-bottom: 2.5rem;
+}
+
+.sectionHead h2 {
+  font-size: clamp(2.5rem, 5vw, 4.6rem);
+  line-height: 0.98;
+  margin: 0.7rem 0 1rem;
+}
+
+.sectionHead p,
+.subtle,
+.previewCopy span,
+.coordinatorCard p,
+.coordinatorCard small,
+.albumCard span,
+.tributeCardMeta span,
+.galleryMeta span,
+.optionCard p {
+  color: var(--muted);
+}
+
+.introGrid,
+.splitLayout,
+.splitPanel,
+.readingGrid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 2rem;
+  align-items: start;
+}
+
+.memorialFacts,
+.optionList,
+.albumList,
+.programmeList,
+.adminSectionGrid,
+.statsGrid,
+.previewGrid,
+.coordinatorGrid,
+.timelineRail,
+.tributeGrid {
+  display: grid;
+  gap: 1.2rem;
+}
+
+.memorialFacts {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.memorialFacts article,
+.previewCard,
+.tributeCard,
+.panel,
+.albumCard,
+.programmeCard,
+.coordinatorCard,
+.optionCard,
+.readingCard,
+.timelineCard,
+.streamCard,
+.galleryCard,
+.adminCard,
+.adminQueueItem,
+.statsGrid article {
+  background: rgba(255, 253, 250, 0.88);
+  border: 1px solid var(--line);
+  border-radius: 1.5rem;
+  box-shadow: var(--shadow);
+}
+
+.memorialFacts article,
+.panel,
+.albumCard,
+.programmeCard,
+.optionCard,
+.readingCard,
+.timelineCard,
+.coordinatorCard,
+.adminCard,
+.adminQueueItem,
+.statsGrid article {
+  padding: 1.5rem;
+}
+
+.featuredBiographyVenue,
+.featuredBiographyDate {
+  display: block;
+}
+
+.featuredBiographyVenue {
+  margin-top: 0.35rem;
+}
+
+.featuredBiographyDate {
+  margin-top: 0.9rem;
+}
+
+.previewGrid {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.previewCard,
+.galleryCard {
+  overflow: hidden;
+  text-align: left;
+}
+
+.previewMedia,
+.galleryThumb,
+.detailMedia,
+.lightboxImage {
+  position: relative;
+}
+
+.previewMedia {
+  height: 16rem;
+}
+
+.previewCopy,
+.galleryMeta {
+  padding: 1rem 1.2rem 1.3rem;
+}
+
+.tributeGrid {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.tributeCard p {
+  padding: 1.5rem 1.5rem 0;
+  font-size: 1.03rem;
+}
+
+.tributeCardMeta {
+  display: flex;
+  flex-direction: column;
+  padding: 1.2rem 1.5rem 1.5rem;
+  border-top: 1px solid var(--line);
+}
+
+.tributeFilterShell {
+  display: grid;
+  gap: 1.5rem;
+}
+
+.filterBar {
+  display: grid;
+  gap: 1rem;
+}
+
+.filterLabel {
+  display: block;
+  margin-bottom: 0.6rem;
+  font-size: 0.82rem;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  color: var(--muted);
+}
+
+.filterOptions {
+  display: flex;
+  gap: 0.6rem;
+  flex-wrap: wrap;
+}
+
+.filterOptions a {
+  padding: 0.55rem 0.9rem;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  text-decoration: none;
+  background: var(--white);
+}
+
+.filterOptions a.active {
+  background: var(--navy-900);
+  color: var(--white);
+}
+
+.form {
+  padding: 1.7rem;
+  background: rgba(255, 253, 250, 0.92);
+  border: 1px solid var(--line);
+  border-radius: 1.5rem;
+  box-shadow: var(--shadow);
+}
+
+.glass {
+  background: rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(16px);
+}
+
+.formGrid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+}
+
+.form label {
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+  margin-bottom: 1rem;
+  font-size: 0.92rem;
+  font-weight: 700;
+}
+
+.form input,
+.form select,
+.form textarea {
+  width: 100%;
+  border: 1px solid var(--line);
+  border-radius: 1rem;
+  padding: 0.9rem 1rem;
+  font: inherit;
+  background: var(--white);
+}
+
+.check {
+  flex-direction: row !important;
+  align-items: center;
+  gap: 0.8rem !important;
+}
+
+.check input {
+  width: auto;
+}
+
+.success,
+.errorBox,
+.infoBox {
+  margin-top: 1rem;
+  border-radius: 1rem;
+  padding: 1rem 1.1rem;
+}
+
+.success {
+  background: rgba(46, 125, 77, 0.12);
+  color: #185335;
+}
+
+.submissionSuccess {
+  position: relative;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 1.1rem;
+  width: 100%;
+  padding: 1.5rem;
+  border: 1px solid rgba(201, 164, 76, 0.42);
+  border-left: 6px solid var(--memorial-gold);
+  border-radius: 1.3rem;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.98), rgba(248, 247, 243, 0.98)),
+    var(--memorial-white);
+  box-shadow: 0 18px 50px rgba(8, 8, 8, 0.12);
+}
+
+.submissionSuccessIcon {
+  display: grid;
+  place-items: center;
+  width: 4rem;
+  height: 4rem;
+  border-radius: 999px;
+  background: radial-gradient(circle at 30% 30%, rgba(231, 207, 138, 0.5), rgba(201, 164, 76, 0.18));
+  border: 1px solid rgba(201, 164, 76, 0.38);
+  color: var(--memorial-deep-gold);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.75);
+}
+
+.submissionSuccessIcon svg {
+  width: 2rem;
+  height: 2rem;
+  stroke: currentColor;
+  fill: none;
+  stroke-width: 2.6;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.submissionSuccessBody {
+  min-width: 0;
+}
+
+.submissionSuccessEyebrow {
+  margin: 0 0 0.45rem;
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  font-size: 0.74rem;
+  font-weight: 800;
+  color: var(--memorial-deep-gold);
+}
+
+.submissionSuccessTitle {
+  margin: 0;
+  font-size: clamp(2rem, 4vw, 3rem);
+  line-height: 0.95;
+  color: var(--memorial-black);
+}
+
+.submissionSuccessMessage {
+  margin: 0.85rem 0 0;
+  max-width: 42rem;
+  color: rgba(23, 23, 23, 0.82);
+}
+
+.submissionReference {
+  display: grid;
+  gap: 0.45rem;
+  margin-top: 1.25rem;
+  padding: 1rem;
+  border-radius: 1rem;
+  border: 1px solid rgba(201, 164, 76, 0.36);
+  background: rgba(231, 207, 138, 0.14);
+}
+
+.submissionReference span,
+.submissionReference small {
+  color: var(--muted);
+}
+
+.submissionReference strong {
+  font-family: "Manrope", sans-serif;
+  font-size: 1rem;
+  letter-spacing: 0.14em;
+  word-break: break-word;
+}
+
+.submissionReference .button {
+  justify-self: start;
+  padding-inline: 1rem;
+}
+
+.submissionSuccessActions {
+  display: flex;
+  gap: 0.9rem;
+  flex-wrap: wrap;
+  margin-top: 1.3rem;
+}
+
+.errorBox {
+  background: rgba(164, 32, 45, 0.12);
+  color: #7d1620;
+}
+
+.infoBox {
+  background: rgba(200, 169, 106, 0.12);
+}
+
+.band {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 2rem 7vw;
+  background: linear-gradient(135deg, #dbc089, #c8a96a);
+}
+
+.band strong {
+  display: block;
+  font-size: 1.6rem;
+  font-family: "Cormorant Garamond", serif;
+}
+
+.countdown {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.countdown div {
+  min-width: 5rem;
+  padding: 1rem;
+  border-radius: 1rem;
+  background: rgba(255, 255, 255, 0.08);
+  text-align: center;
+}
+
+.countdown strong {
+  display: block;
+  font-size: 2rem;
+  font-family: "Cormorant Garamond", serif;
+}
+
+.memorialEventsSection,
+.memorialStreamsSection {
+  display: grid;
+  gap: 2rem;
+}
+
+.memorialEventGrid,
+.memorialStreamGrid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1.5rem;
+}
+
+.memorialEventCard,
+.memorialStreamCard,
+.memorialWatchCard {
+  position: relative;
+  overflow: hidden;
+  border-radius: 1.75rem;
+  border: 1px solid var(--line);
+  padding: 1.6rem;
+  box-shadow: var(--shadow);
+}
+
+.memorialEventCard {
+  display: grid;
+  gap: 1rem;
+  animation: memorial-fade-up 760ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+
+.memorialEventCardWake {
+  background:
+    radial-gradient(circle at top right, rgba(231, 207, 138, 0.22), transparent 28%),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.98), rgba(248, 247, 243, 0.96));
+  color: var(--memorial-black);
+}
+
+.memorialEventCardBurial {
+  background:
+    linear-gradient(135deg, rgba(8, 8, 8, 0.98), rgba(23, 23, 23, 0.94), rgba(8, 8, 8, 0.98));
+  background-size: 140% 140%;
+  border-color: rgba(231, 207, 138, 0.28);
+  color: var(--memorial-white);
+  animation:
+    memorial-fade-up 760ms cubic-bezier(0.2, 0.8, 0.2, 1) both,
+    memorial-dark-drift 14s ease-in-out infinite;
+}
+
+.memorialEventTopLine {
+  width: 5rem;
+  height: 1px;
+  background: linear-gradient(90deg, var(--memorial-gold), rgba(201, 164, 76, 0));
+  transform-origin: left center;
+  animation: memorial-line-draw 900ms ease both;
+}
+
+.memorialEventLabelRow,
+.memorialStreamHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.memorialEventLabel,
+.memorialStreamStatus {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.35rem 0.7rem;
+  border-radius: 999px;
+  border: 1px solid rgba(201, 164, 76, 0.28);
+  color: var(--memorial-deep-gold);
+  font-size: 0.74rem;
+  font-weight: 800;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+.memorialEventIcon {
+  color: var(--memorial-deep-gold);
+  font-size: 1rem;
+}
+
+.memorialEventCard h3,
+.memorialStreamCard h3,
+.memorialWatchCard h3 {
+  margin: 0;
+  font-size: clamp(2rem, 3vw, 3rem);
+  line-height: 0.98;
+}
+
+.memorialEventDateTime,
+.memorialStreamDateTime {
+  display: block;
+  color: inherit;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+}
+
+.memorialEventVenue {
+  display: grid;
+  gap: 0.25rem;
+  margin: 0;
+  font-weight: 700;
+}
+
+.memorialEventDescription,
+.memorialStreamCopy {
+  margin: 0;
+  color: inherit;
+  opacity: 0.84;
+}
+
+.eventCountdown {
+  display: grid;
+  gap: 0.9rem;
+  margin-top: 0.2rem;
+}
+
+.eventCountdownLabel {
+  margin: 0;
+  color: var(--memorial-deep-gold);
+  font-size: 0.82rem;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.eventCountdownGrid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0.75rem;
+}
+
+.eventCountdownUnit {
+  padding: 0.95rem 0.7rem;
+  border-radius: 1rem;
+  border: 1px solid rgba(201, 164, 76, 0.22);
+  background: rgba(255, 255, 255, 0.72);
+  text-align: center;
+}
+
+.eventCountdownUnit strong {
+  display: block;
+  font-size: clamp(1.6rem, 3vw, 2.25rem);
+  line-height: 1;
+  font-family: "Cormorant Garamond", serif;
+  font-variant-numeric: tabular-nums;
+  transition: transform 180ms ease, opacity 180ms ease;
+}
+
+.eventCountdownUnit span {
+  display: block;
+  margin-top: 0.35rem;
+  font-size: 0.76rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.eventCountdownInverse .eventCountdownLabel,
+.memorialEventCardBurial .memorialEventIcon,
+.memorialEventCardBurial .memorialEventLabel {
+  color: var(--memorial-light-gold);
+}
+
+.eventCountdownInverse .eventCountdownUnit {
+  background: rgba(255, 255, 255, 0.05);
+  border-color: rgba(231, 207, 138, 0.18);
+}
+
+.eventCountdownInverse .eventCountdownUnit span {
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.eventCountdownComplete {
+  margin: 0;
+  padding: 1rem 1.1rem;
+  border-radius: 1rem;
+  background: rgba(201, 164, 76, 0.12);
+  color: var(--memorial-deep-gold);
+  font-weight: 700;
+}
+
+.eventCountdownCompleteInverse {
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--memorial-light-gold);
+}
+
+.memorialEventButton {
+  background: linear-gradient(135deg, var(--memorial-gold), var(--memorial-light-gold));
+  color: var(--memorial-black);
+}
+
+.memorialEventButtonInverse {
+  background: rgba(255, 255, 255, 0.06);
+  color: var(--memorial-white);
+  border: 1px solid rgba(231, 207, 138, 0.22);
+}
+
+.memorialStreamCard,
+.memorialWatchCard {
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.96), rgba(248, 247, 243, 0.94));
+}
+
+.memorialStreamPlaceholder {
+  display: grid;
+  place-items: center;
+  min-height: 8rem;
+  border-radius: 1.2rem;
+  border: 1px dashed rgba(201, 164, 76, 0.34);
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.8), rgba(248, 247, 243, 0.95)),
+    radial-gradient(circle at center, rgba(231, 207, 138, 0.14), transparent 50%);
+}
+
+.memorialStreamPlaceholder span {
+  width: 3rem;
+  height: 3rem;
+  border-radius: 999px;
+  border: 1px solid rgba(201, 164, 76, 0.45);
+  position: relative;
+}
+
+.memorialStreamPlaceholder span::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 54%;
+  width: 0;
+  height: 0;
+  border-top: 0.45rem solid transparent;
+  border-bottom: 0.45rem solid transparent;
+  border-left: 0.72rem solid rgba(201, 164, 76, 0.72);
+  transform: translate(-50%, -50%);
+}
+
+.memorialStreamPlaceholderLarge {
+  min-height: 20rem;
+}
+
+.memorialStreamEmbedPlaceholder {
+  display: grid;
+  gap: 1rem;
+}
+
+.programmeCardMemorial {
+  display: grid;
+  gap: 0.85rem;
+}
+
+.programmeSoonButton:disabled {
+  cursor: not-allowed;
+  opacity: 0.75;
+}
+
+.chips {
+  display: flex;
+  gap: 0.7rem;
+  flex-wrap: wrap;
+}
+
+.chips span {
+  padding: 0.6rem 0.9rem;
+  border-radius: 999px;
+  background: rgba(16, 36, 61, 0.06);
+}
+
+.coordinatorGrid {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.avatar {
+  display: inline-grid;
+  place-items: center;
+  width: 3rem;
+  height: 3rem;
+  border-radius: 999px;
+  background: var(--navy-900);
+  color: var(--white);
+  margin-bottom: 1rem;
+}
+
+.contactList {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.timelineRail {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.timelineCard span {
+  color: var(--gold-600);
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  font-size: 0.76rem;
+}
+
+.readingStack,
+.biographyStack,
+.livestreamStack,
+.auditList,
+.adminQueue {
+  display: grid;
+  gap: 1rem;
+}
+
+.programmeList {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.orderedProgramme {
+  display: grid;
+  gap: 0.8rem;
+  padding-left: 1.25rem;
+}
+
+.streamCard {
+  display: grid;
+  grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+  gap: 1.5rem;
+  padding: 1.5rem;
+}
+
+.streamEmbed iframe,
+.lightbox iframe {
+  width: 100%;
+  min-height: 24rem;
+  border: 0;
+  border-radius: 1.2rem;
+}
+
+.galleryGrid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1rem;
+}
+
+.galleryCard {
+  border: 0;
+  padding: 0;
+  cursor: pointer;
+}
+
+.galleryThumb {
+  height: 18rem;
+}
+
+.playBadge {
+  position: absolute;
+  bottom: 1rem;
+  right: 1rem;
+  padding: 0.5rem 0.8rem;
+  border-radius: 999px;
+  background: rgba(8, 21, 36, 0.78);
+  color: var(--white);
+}
+
+.lightbox {
+  width: min(72rem, calc(100vw - 2rem));
+  border: 0;
+  border-radius: 1.5rem;
+  padding: 1rem;
+}
+
+.lightbox::backdrop {
+  background: rgba(8, 21, 36, 0.84);
+}
+
+.closeButton {
+  margin-left: auto;
+  display: block;
+  border: 0;
+  background: transparent;
+  font: inherit;
+}
+
+.lightboxBody {
+  display: grid;
+  gap: 1rem;
+}
+
+.lightboxImage {
+  height: 70vh;
+}
+
+.detailShell {
+  display: grid;
+  gap: 1rem;
+}
+
+.detailMediaGrid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+}
+
+.detailMedia {
+  height: 18rem;
+  overflow: hidden;
+  border-radius: 1.2rem;
+}
+
+.methodTabs {
+  display: flex;
+  gap: 0.6rem;
+  flex-wrap: wrap;
+  margin-bottom: 1rem;
+}
+
+.methodTabs button {
+  border: 1px solid var(--line);
+  background: var(--white);
+  border-radius: 999px;
+  padding: 0.7rem 1rem;
+  cursor: pointer;
+}
+
+.methodTabs button.active {
+  background: var(--navy-900);
+  color: var(--white);
+}
+
+.footer {
+  padding: 4rem 7vw;
+  text-align: center;
+  background: var(--navy-950);
+  color: var(--white);
+}
+
+.footerBrand {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.8rem;
+}
+
+.footerBrand .siteLogoPortrait {
+  width: 3.5rem;
+  height: 3.5rem;
+}
+
+.footerBrand .siteLogoText {
+  font-size: 1.05rem;
+  font-weight: 700;
+}
+
+.adminShell {
+  display: grid;
+  grid-template-columns: 18rem minmax(0, 1fr);
+  min-height: calc(100vh - 84px);
+}
+
+.adminSidebar {
+  padding: 2rem;
+  background: var(--navy-950);
+  color: var(--white);
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.adminSidebarHeader,
+.adminSidebarMeta {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.adminNav {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.adminNav a {
+  padding: 0.8rem 0.95rem;
+  border-radius: 1rem;
+  color: rgba(255, 255, 255, 0.86);
+  text-decoration: none;
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.adminNav a:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.adminContent,
+.adminLoginCard,
+.adminPage {
+  padding: 2rem;
+}
+
+.adminLoginCard {
+  max-width: 36rem;
+  margin: 4rem auto;
+}
+
+.adminHero h1 {
+  font-size: 3rem;
+}
+
+.adminPageHeader,
+.adminPanelHeader,
+.adminQueueHeader,
+.adminMetaRow,
+.adminSaveBar,
+.adminActionRow,
+.adminCheckRow {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.adminPageHeader {
+  margin-bottom: 1.5rem;
+}
+
+.adminPageHeader p,
+.adminPanelHeader p,
+.adminFormSectionHead p,
+.adminSaveBar p,
+.adminSidebarMeta p,
+.adminSummaryList span,
+.adminBackLink {
+  color: var(--muted);
+}
+
+.adminPageActions,
+.adminActionStack,
+.adminPanelStack,
+.adminRecordStack,
+.adminLongForm,
+.adminFormSection,
+.adminSummaryList,
+.adminPaginationActions {
+  display: grid;
+  gap: 1rem;
+}
+
+.adminSplitGrid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1.5rem;
+  margin: 1.5rem 0;
+}
+
+.adminPanel {
+  padding: 1.5rem;
+  background: rgba(255, 253, 250, 0.92);
+  border: 1px solid var(--line);
+  border-radius: 1.5rem;
+  box-shadow: var(--shadow);
+}
+
+.adminPanelHeader {
+  margin-bottom: 1rem;
+}
+
+.adminFilterBar {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 1rem;
+  align-items: end;
+}
+
+.adminFilterBar .button {
+  width: 100%;
+}
+
+.statsGrid {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  margin: 2rem 0;
+}
+
+.statsGrid strong {
+  font-size: 2.3rem;
+  font-family: "Cormorant Garamond", serif;
+}
+
+.adminStatCard,
+.adminEmptyState,
+.adminMobileCard,
+.adminRecordCard,
+.adminNotice,
+.adminFormSectionBody {
+  background: rgba(255, 253, 250, 0.92);
+}
+
+.adminStatCard {
+  padding: 1.4rem;
+  border: 1px solid var(--line);
+  border-radius: 1.4rem;
+  box-shadow: var(--shadow);
+}
+
+.adminStatCard span,
+.adminStatCard small {
+  color: var(--muted);
+}
+
+.adminStatCard strong {
+  display: block;
+  margin: 0.4rem 0;
+}
+
+.adminSectionGrid,
+.adminQueue {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.adminQueue {
+  align-items: start;
+}
+
+.adminQueueItem {
+  display: grid;
+  gap: 0.45rem;
+}
+
+.adminBadge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.32rem 0.65rem;
+  border-radius: 999px;
+  font-size: 0.78rem;
+  font-weight: 700;
+  text-transform: capitalize;
+}
+
+.adminBadge-neutral {
+  background: rgba(19, 32, 48, 0.08);
+  color: var(--ink);
+}
+
+.adminBadge-success {
+  background: rgba(46, 125, 77, 0.12);
+  color: #185335;
+}
+
+.adminBadge-warning {
+  background: rgba(200, 169, 106, 0.18);
+  color: #775213;
+}
+
+.adminBadge-danger {
+  background: rgba(164, 32, 45, 0.12);
+  color: #7d1620;
+}
+
+.adminBadge-info {
+  background: rgba(23, 53, 88, 0.12);
+  color: var(--navy-800);
+}
+
+.adminNotice,
+.adminEmptyState {
+  margin: 1rem 0 1.5rem;
+  padding: 1rem 1.1rem;
+  border: 1px solid var(--line);
+  border-radius: 1.1rem;
+}
+
+.adminNotice-success {
+  background: rgba(46, 125, 77, 0.1);
+}
+
+.adminNotice-error {
+  background: rgba(164, 32, 45, 0.1);
+}
+
+.adminTableWrap {
+  margin: 1.5rem 0;
+}
+
+.adminTable {
+  width: 100%;
+  border-collapse: collapse;
+  overflow: hidden;
+  background: rgba(255, 253, 250, 0.96);
+  border: 1px solid var(--line);
+  border-radius: 1.4rem;
+  box-shadow: var(--shadow);
+}
+
+.adminTable th,
+.adminTable td {
+  padding: 1rem;
+  border-bottom: 1px solid var(--line);
+  text-align: left;
+  vertical-align: top;
+}
+
+.adminTable th {
+  font-size: 0.82rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--muted);
+}
+
+.adminTable tbody tr:last-child td {
+  border-bottom: 0;
+}
+
+.adminMobileList {
+  display: none;
+  gap: 1rem;
+}
+
+.adminMobileCard {
+  padding: 1rem;
+  border: 1px solid var(--line);
+  border-radius: 1.2rem;
+  box-shadow: var(--shadow);
+}
+
+.adminMobileCardRow {
+  display: grid;
+  gap: 0.35rem;
+  margin-bottom: 0.85rem;
+}
+
+.adminMobileCardRow span {
+  font-size: 0.8rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.adminFormSection {
+  gap: 0.8rem;
+}
+
+.adminFormSection h2 {
+  margin-bottom: 0.35rem;
+}
+
+.adminFormSectionBody {
+  display: grid;
+  gap: 1rem;
+}
+
+.adminSaveBar {
+  margin-top: 1rem;
+  padding: 1rem 1.2rem;
+  border: 1px solid var(--line);
+  border-radius: 1.2rem;
+  background: linear-gradient(180deg, rgba(255, 253, 250, 0.98), rgba(245, 239, 228, 0.92));
+}
+
+.adminSaveBar strong {
+  display: block;
+  margin-bottom: 0.2rem;
+}
+
+.adminDangerButton {
+  border-color: rgba(164, 32, 45, 0.25);
+  color: #7d1620;
+}
+
+.adminPagination {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+  margin-top: 1.5rem;
+}
+
+.adminPaginationActions {
+  display: flex;
+  gap: 0.75rem;
+}
+
+.adminDialog {
+  width: min(34rem, calc(100vw - 2rem));
+  border: 0;
+  border-radius: 1.4rem;
+  padding: 0;
+  box-shadow: var(--shadow);
+}
+
+.adminDialog::backdrop {
+  background: rgba(8, 21, 36, 0.82);
+}
+
+.adminDialogForm {
+  display: grid;
+  gap: 1rem;
+  padding: 1.4rem;
+  background: var(--white);
+}
+
+.adminDialogHeader,
+.adminDialogActions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.adminDialogActions {
+  justify-content: flex-end;
+}
+
+.adminSkeleton {
+  position: relative;
+  overflow: hidden;
+}
+
+.adminSkeleton::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.55), transparent);
+  transform: translateX(-100%);
+  animation: admin-skeleton 1.6s infinite;
+}
+
+.adminSkeletonBlock {
+  min-height: 10rem;
+}
+
+@keyframes admin-skeleton {
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+@keyframes memorial-fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(24px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes memorial-line-draw {
+  from {
+    transform: scaleX(0);
+  }
+
+  to {
+    transform: scaleX(1);
+  }
+}
+
+@keyframes memorial-appear {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes memorial-shimmer {
+  0%,
+  100% {
+    background-position: 140% 50%;
+  }
+
+  50% {
+    background-position: -20% 50%;
+  }
+}
+
+@keyframes memorial-float {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+
+  50% {
+    transform: translateY(-7px);
+  }
+}
+
+@keyframes memorial-ring {
+  0%,
+  100% {
+    transform: translate(-50%, -50%) rotate(0deg) scale(1);
+    opacity: 0.32;
+  }
+
+  50% {
+    transform: translate(-50%, -50%) rotate(5deg) scale(1.02);
+    opacity: 0.56;
+  }
+}
+
+@keyframes memorial-halo {
+  0%,
+  100% {
+    transform: scale(0.98);
+    opacity: 0.78;
+  }
+
+  50% {
+    transform: scale(1.04);
+    opacity: 1;
+  }
+}
+
+@keyframes memorial-drift {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0);
+  }
+
+  50% {
+    transform: translate3d(12px, -10px, 0);
+  }
+}
+
+@keyframes memorial-sweep {
+  0%,
+  100% {
+    transform: translateX(16%);
+    opacity: 0.26;
+  }
+
+  50% {
+    transform: translateX(-14%);
+    opacity: 0.42;
+  }
+}
+
+@keyframes memorial-particle {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0) scale(1);
+    opacity: 0.18;
+  }
+
+  50% {
+    transform: translate3d(0, -8px, 0) scale(1.18);
+    opacity: 0.56;
+  }
+}
+
+@keyframes memorial-scroll-dot {
+  0% {
+    top: 0.35rem;
+    opacity: 0;
+  }
+
+  20% {
+    opacity: 1;
+  }
+
+  80% {
+    opacity: 1;
+  }
+
+  100% {
+    top: 3.6rem;
+    opacity: 0;
+  }
+}
+
+@keyframes memorial-dark-drift {
+  0%,
+  100% {
+    background-position: 0% 50%;
+  }
+
+  50% {
+    background-position: 100% 50%;
+  }
+}
+
+.adminInlineForm {
+  margin-top: 0.75rem;
+}
+
+.adminMediaEditorCard,
+.adminMediaCard {
+  display: grid;
+  gap: 1rem;
+}
+
+.adminMediaEditorLayout,
+.adminMediaGrid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1.2rem;
+}
+
+.adminMediaGrid {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.adminMediaPreview {
+  width: 100%;
+  min-height: 14rem;
+  border-radius: 1.2rem;
+  border: 1px solid var(--line);
+  background: rgba(19, 32, 48, 0.06);
+  overflow: hidden;
+}
+
+.adminMediaPreview-image {
+  position: relative;
+  aspect-ratio: 4 / 3;
+}
+
+.adminMediaPreview-empty,
+.adminMediaPreview-doc {
+  display: grid;
+  place-items: center;
+  padding: 1.5rem;
+  text-align: center;
+}
+
+.adminBackLink {
+  display: inline-block;
+  margin-bottom: 1rem;
+  text-decoration: none;
+}
+
+.adminSummaryList {
+  gap: 0.9rem;
+}
+
+.adminSummaryList div {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1rem;
+  padding-bottom: 0.7rem;
+  border-bottom: 1px solid var(--line);
+}
+
+.adminActions {
+  display: flex;
+  gap: 0.6rem;
+  flex-wrap: wrap;
+  margin-top: 1rem;
+}
+
+.adminActions button {
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: var(--white);
+  padding: 0.55rem 0.9rem;
+  cursor: pointer;
+}
+
+.reveal {
+  opacity: 0;
+  transform: translateY(24px);
+  transition: opacity 0.75s ease, transform 0.75s ease;
+}
+
+.reveal.seen {
+  opacity: 1;
+  transform: none;
+}
+
+@media print {
+  .header,
+  .cardActions,
+  .footer {
+    display: none !important;
+  }
+
+  body {
+    background: white;
+  }
+
+  .pageHero,
+  .section {
+    color: black;
+    background: white;
+    padding: 1rem 0;
+  }
+}
+
+@media (max-width: 1080px) {
+  .hero,
+  .memorialHeroContent,
+  .introGrid,
+  .splitLayout,
+  .splitPanel,
+  .readingGrid,
+  .streamCard,
+  .adminShell {
+    grid-template-columns: 1fr;
+  }
+
+  .previewGrid,
+  .memorialEventGrid,
+  .memorialStreamGrid,
+  .timelineRail,
+  .programmeList,
+  .coordinatorGrid,
+  .galleryGrid,
+  .adminSectionGrid,
+  .statsGrid,
+  .adminSplitGrid,
+  .adminMediaGrid,
+  .adminMediaEditorLayout {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .adminFilterBar {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .nav {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    padding: 1rem 5vw 1.4rem;
+    background: rgba(255, 255, 255, 0.96);
+    border-bottom: 1px solid rgba(201, 164, 76, 0.24);
+  }
+
+  .nav.open {
+    display: grid;
+  }
+
+  .menu {
+    display: inline-flex;
+  }
+
+  .memorialHero {
+    min-height: auto;
+  }
+
+  .memorialHeroPortrait {
+    min-height: 30rem;
+  }
+}
+
+@media (max-width: 720px) {
+  .section,
+  .hero,
+  .pageHero,
+  .footer,
+  .band {
+    padding-left: 5vw;
+    padding-right: 5vw;
+  }
+
+  .hero h1,
+  .pageHero h1 {
+    font-size: 3.4rem;
+  }
+
+  .memorialHero {
+    gap: 2rem;
+    padding-top: 3.5rem;
+  }
+
+  .memorialHeroContent {
+    gap: 1.75rem;
+  }
+
+  .memorialHeroCopy {
+    gap: 1rem;
+  }
+
+  .memorialHeadingIntro {
+    font-size: 2.3rem;
+  }
+
+  .memorialHeadingName {
+    font-size: 3.4rem;
+  }
+
+  .memorialHeroPortrait {
+    min-height: 24rem;
+    order: 2;
+  }
+
+  .memorialPortraitFrame {
+    width: min(100%, 24rem);
+    aspect-ratio: 4 / 5;
+  }
+
+  .memorialActions,
+  .memorialSecondaryActions {
+    width: 100%;
+  }
+
+  .memorialSecondaryActions {
+    gap: 1rem;
+  }
+
+  .memorialLine {
+    top: 7rem;
+    left: 5vw;
+    width: 4.2rem;
+  }
+
+  .memorialCorner {
+    width: 4.5rem;
+    height: 4.5rem;
+  }
+
+  .previewGrid,
+  .memorialFacts,
+  .eventCountdownGrid,
+  .tributeGrid,
+  .formGrid,
+  .detailMediaGrid,
+  .programmeList,
+  .timelineRail,
+  .coordinatorGrid,
+  .galleryGrid,
+  .adminSectionGrid,
+  .statsGrid,
+  .adminSplitGrid,
+  .adminMediaGrid,
+  .adminMediaEditorLayout,
+  .adminFilterBar {
+    grid-template-columns: 1fr;
+  }
+
+  .band {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .button,
+  .quickLinks a {
+    width: 100%;
+  }
+
+  .brand {
+    gap: 0.65rem;
+  }
+
+  .siteLogoPortrait {
+    width: 2.5rem;
+    height: 2.5rem;
+  }
+
+  .siteLogoText {
+    font-size: 0.88rem;
+  }
+
+  .submissionSuccess {
+    grid-template-columns: 1fr;
+    padding: 1.25rem;
+  }
+
+  .submissionSuccessIcon {
+    width: 3.5rem;
+    height: 3.5rem;
+  }
+
+  .memorialEventCard,
+  .memorialStreamCard,
+  .memorialWatchCard {
+    padding: 1.25rem;
+  }
+
+  .memorialEventCard h3,
+  .memorialStreamCard h3,
+  .memorialWatchCard h3 {
+    font-size: 2rem;
+  }
+
+  .scrollIndicator {
+    justify-self: start;
+  }
+
+  .adminPagination,
+  .adminDialogHeader,
+  .adminDialogActions {
+    align-items: stretch;
+  }
+
+  .adminTable {
+    display: none;
+  }
+
+  .adminMobileList {
+    display: grid;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+
+  .reveal,
+  .memorialKicker,
+  .memorialHeadingIntro,
+  .memorialSubtitle,
+  .memorialMeta,
+  .memorialActions,
+  .memorialSecondaryActions,
+  .scrollIndicator,
+  .memorialPortraitFrame,
+  .memorialCorner,
+  .memorialLine {
+    opacity: 1;
+    transform: none;
+  }
+
+  .memorialEventCard,
+  .memorialEventCardBurial,
+  .eventCountdownUnit strong {
+    animation: none !important;
+    transition: none !important;
+  }
+}

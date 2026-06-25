@@ -1,0 +1,550 @@
+import type { Route } from "next";
+import { funeralDateRangeDisplay, funeralEvents } from "@/lib/events";
+
+export const demoNavigation: Array<{ href: Route; label: string }> = [
+  { href: "/", label: "Home" },
+  { href: "/biography", label: "Biography" },
+  { href: "/tributes", label: "Tributes" },
+  { href: "/gallery", label: "Gallery" },
+  { href: "/programme", label: "Programme" },
+  { href: "/watch", label: "Watch Live" },
+  { href: "/teams", label: "Join a Team" },
+  { href: "/donations", label: "Donations" },
+  { href: "/coordinators", label: "Coordinators" },
+];
+
+export const demoSiteSettings = {
+  memorialName: "Pa Ndambi Paul Angemba",
+  title: "Celebrating the Life and Legacy of Pa Ndambi Paul Angemba",
+  subtitle: "A life of love, wisdom, faith, and legacy.",
+  shortTitle: "Pa Ndambi Memorial",
+  dates: {
+    birth: "12 March 1941",
+    passing: "18 May 2026",
+    memorialWeekend: funeralDateRangeDisplay,
+  },
+  hero: {
+    kicker: "In Loving Memory",
+    heading: "A father, mentor, servant and steady light to many.",
+    copy:
+      "This memorial gathers the stories, programme details, livestream access and practical ways the family and community can honour Pa Ndambi with dignity and care.",
+    biographyExcerpt:
+      "Pa Ndambi Paul Angemba lived with grace, conviction and generosity. He was known for patient counsel, deep faith, careful stewardship and a home that welcomed relatives, neighbours and strangers alike.",
+  },
+  biographyIntroduction:
+    "This life story remains editable from the administration area once Supabase is configured, but the memorial experience can still be previewed locally in demo mode.",
+  shareText:
+    "Join us in celebrating the life and legacy of Pa Ndambi Paul Angemba. View the memorial, programme and tributes.",
+  seo: {
+    description:
+      "Official memorial website for Pa Ndambi Paul Angemba with biography, tributes, gallery, funeral programme, livestream access, volunteer registration and donation information.",
+    keywords: [
+      "Pa Ndambi Paul Angemba memorial",
+      "funeral programme",
+      "tributes",
+      "livestream",
+      "memorial donations",
+    ],
+    title: "Celebrating the Life and Legacy of Pa Ndambi Paul Angemba",
+  },
+  venueHighlights: [
+    {
+      label: funeralEvents[0].title,
+      venue: funeralEvents[0].venue,
+      date: funeralEvents[0].displayCompactDateTime,
+    },
+    {
+      label: funeralEvents[1].title,
+      venue: funeralEvents[1].venue,
+      date: funeralEvents[1].displayCompactDateTime,
+    },
+  ],
+  venueInformation: [
+    {
+      title: funeralEvents[0].venue,
+      address: funeralEvents[0].locationNote || "Mbengwi",
+      mapUrl: "",
+    },
+    {
+      title: funeralEvents[1].venue,
+      address: "Njembeng",
+      mapUrl: "",
+    },
+  ],
+  livestreamFallbackMessage: "Livestream access details will appear here once the family confirms the broadcast links.",
+  socialLinks: {
+    whatsapp:
+      "https://wa.me/?text=Join%20us%20in%20celebrating%20the%20life%20and%20legacy%20of%20Pa%20Ndambi%20Paul%20Angemba",
+  },
+  openGraphImage: "/placeholders/social-preview.svg",
+  familyContacts: {
+    primaryName: "Family Secretariat",
+    primaryEmail: "family@example.org",
+    primaryPhone: "+000 000 000",
+  },
+  mobileMoney: {
+    mtnEnabled: false,
+    orangeEnabled: false,
+    mtnDisplayNumber: "",
+    orangeDisplayNumber: "",
+  },
+};
+
+export const demoBiographySections = [
+  {
+    id: "early-life",
+    slug: "early-life",
+    title: "Early life",
+    body:
+      "Born into a close-knit family that valued hard work and reverence, Pa Ndambi grew up learning that leadership begins with service. His earliest years formed the calm discipline and tenderness that marked the rest of his life.",
+    displayOrder: 1,
+  },
+  {
+    id: "family",
+    slug: "family",
+    title: "Family",
+    body:
+      "He cherished family as both calling and refuge. He encouraged each child and grandchild to pursue wisdom, treat people honourably and keep the family bond strong across distance and seasons of change.",
+    displayOrder: 2,
+  },
+  {
+    id: "education",
+    slug: "education",
+    title: "Education",
+    body:
+      "Committed to learning throughout life, he treated education not only as a path to opportunity but as a moral duty. He was the sort of elder who remembered report cards, exam dates and the quiet needs behind them.",
+    displayOrder: 3,
+  },
+  {
+    id: "career",
+    slug: "career",
+    title: "Career",
+    body:
+      "Whether at work, in mentorship or around community projects, he was known for reliability, thoughtful counsel and a steady hand. People trusted him to take the long view and keep promises.",
+    displayOrder: 4,
+  },
+  {
+    id: "faith",
+    slug: "faith",
+    title: "Faith",
+    body:
+      "Faith was not ornamental in his life. It shaped his speech, his hospitality and the rhythm of his days. He prayed with conviction, served with humility and modelled what it means to remain grounded in hope.",
+    displayOrder: 5,
+  },
+  {
+    id: "community-service",
+    slug: "community-service",
+    title: "Community service",
+    body:
+      "Many knew him through practical help: visiting the sick, advocating for younger families, supporting church efforts and giving his presence when it mattered. His service was generous and often quiet.",
+    displayOrder: 6,
+  },
+  {
+    id: "character",
+    slug: "character",
+    title: "Character",
+    body:
+      "He carried dignity without distance, authority without harshness and wisdom without display. His humour, patience and careful attention made people feel seen.",
+    displayOrder: 7,
+  },
+  {
+    id: "legacy",
+    slug: "legacy",
+    title: "Legacy",
+    body:
+      "His legacy lives on in family devotion, faithfulness to community and the values he instilled: honour, discipline, compassion and responsibility for one another.",
+    displayOrder: 8,
+  },
+];
+
+export const demoTimeline = [
+  { id: "t1", dateLabel: "1941", year: 1941, title: "Born into the Angemba family", description: "A new chapter began in a home shaped by love, resilience and reverence.", imageUrl: null, displayOrder: 1 },
+  { id: "t2", dateLabel: "1960s", year: 1960, title: "Formative years of study and work", description: "He built the habits of discipline, stewardship and patient mentorship.", imageUrl: null, displayOrder: 2 },
+  { id: "t3", dateLabel: "1970s", year: 1970, title: "Marriage and young family life", description: "He helped create a home where faith, order and hospitality worked together.", imageUrl: null, displayOrder: 3 },
+  { id: "t4", dateLabel: "1980s", year: 1980, title: "Community service deepened", description: "Known for counsel, dependability and generous support for relatives and neighbours.", imageUrl: null, displayOrder: 4 },
+  { id: "t5", dateLabel: "1990s", year: 1990, title: "A trusted elder", description: "He became a stabilising voice for younger generations and church circles.", imageUrl: null, displayOrder: 5 },
+  { id: "t6", dateLabel: "2000s", year: 2000, title: "Legacy of mentorship", description: "He continued guiding family, church and community with clarity and kindness.", imageUrl: null, displayOrder: 6 },
+  { id: "t7", dateLabel: "2026", year: 2026, title: "Called home", description: "He leaves a testimony of love, wisdom, faith and enduring example.", imageUrl: null, displayOrder: 7 },
+];
+
+export const demoTributes = [
+  {
+    id: "tr1",
+    slug: "marforh-angemba",
+    status: "approved",
+    featured: true,
+    category: "Family",
+    relationship: "Daughter",
+    name: "Marforh, Angemba",
+    location: "Yaounde, Cameroon",
+    message:
+      "Papa taught us that strength can be gentle. He listened before he spoke, corrected without humiliating and prayed over every turning point in our lives.",
+    profileImageUrl: "/placeholders/tribute-profile.svg",
+    submittedAt: "2026-06-08T10:00:00+02:00",
+    publishedAt: "2026-06-10T09:15:00+02:00",
+    privateEmail: "private@example.org",
+    privatePhone: "+000",
+    rejectionReason: null,
+    archivedAt: null,
+  },
+  {
+    id: "tr2",
+    slug: "samuel-cho",
+    status: "approved",
+    featured: true,
+    category: "Community",
+    relationship: "Friend",
+    name: "Samuel Cho",
+    location: "Bamenda, Cameroon",
+    message:
+      "He carried a rare steadiness. Many of us sought his perspective because he had a gift for reducing confusion and calling us back to what was right.",
+    profileImageUrl: "/placeholders/tribute-profile.svg",
+    submittedAt: "2026-06-10T11:00:00+02:00",
+    publishedAt: "2026-06-11T08:30:00+02:00",
+    privateEmail: "private@example.org",
+    privatePhone: "+000",
+    rejectionReason: null,
+    archivedAt: null,
+  },
+  {
+    id: "tr3",
+    slug: "rev-njume",
+    status: "approved",
+    featured: false,
+    category: "Faith",
+    relationship: "Church",
+    name: "Rev. Esther Njume",
+    location: "Douala, Cameroon",
+    message:
+      "He served with quiet conviction. He did not need attention to be faithful; his testimony was visible in consistency, kindness and reverence.",
+    profileImageUrl: "/placeholders/tribute-profile.svg",
+    submittedAt: "2026-06-12T16:45:00+02:00",
+    publishedAt: "2026-06-13T08:30:00+02:00",
+    privateEmail: "private@example.org",
+    privatePhone: "+000",
+    rejectionReason: null,
+    archivedAt: null,
+  },
+  {
+    id: "tr4",
+    slug: "ian-angemba",
+    status: "pending",
+    featured: false,
+    category: "Mentorship",
+    relationship: "Grandchild",
+    name: "Ian Angemba",
+    location: "Johannesburg, South Africa",
+    message:
+      "He made every visit feel important. Even ordinary conversations became lessons in discipline, gratitude and dignity.",
+    profileImageUrl: "/placeholders/tribute-profile.svg",
+    submittedAt: "2026-06-15T16:45:00+02:00",
+    publishedAt: null,
+    privateEmail: "private@example.org",
+    privatePhone: "+000",
+    rejectionReason: null,
+    archivedAt: null,
+  },
+];
+
+export const demoMediaItems = [
+  {
+    id: "g1",
+    tributeId: "tr1",
+    albumSlug: "family-home",
+    albumTitle: "Family Home & Gatherings",
+    category: "Family",
+    kind: "image",
+    title: "Evening gathering",
+    caption: "Placeholder image for a family evening at home.",
+    altText: "Family gathering placeholder",
+    contributor: "Family Archive",
+    date: "2004-12-24",
+    posterUrl: "/placeholders/gallery-1.svg",
+    publicUrl: "/placeholders/gallery-1.svg",
+    approved: true,
+    featured: true,
+    mimeType: "image/svg+xml",
+    sizeBytes: 12000,
+  },
+  {
+    id: "g2",
+    tributeId: "tr1",
+    albumSlug: "family-home",
+    albumTitle: "Family Home & Gatherings",
+    category: "Family",
+    kind: "image",
+    title: "Celebration day",
+    caption: "Placeholder image representing a milestone celebration.",
+    altText: "Family celebration placeholder",
+    contributor: "Family Archive",
+    date: "2011-08-19",
+    posterUrl: "/placeholders/gallery-2.svg",
+    publicUrl: "/placeholders/gallery-2.svg",
+    approved: true,
+    featured: true,
+    mimeType: "image/svg+xml",
+    sizeBytes: 12000,
+  },
+  {
+    id: "g3",
+    tributeId: "tr2",
+    albumSlug: "community-and-faith",
+    albumTitle: "Faith & Community Moments",
+    category: "Community",
+    kind: "video",
+    title: "Community testimony",
+    caption: "Poster placeholder for a short video testimony.",
+    altText: "Video testimony placeholder",
+    contributor: "Memorial Media Team",
+    date: "2026-06-05",
+    posterUrl: "/placeholders/live-poster.svg",
+    publicUrl: "https://www.youtube.com/embed/dQw4w9WgXcQ",
+    approved: true,
+    featured: false,
+    mimeType: "video/mp4",
+    sizeBytes: 12000,
+  },
+  {
+    id: "g4",
+    tributeId: null,
+    albumSlug: "community-and-faith",
+    albumTitle: "Faith & Community Moments",
+    category: "Community",
+    kind: "image",
+    title: "Church programme day",
+    caption: "Placeholder image from a church service.",
+    altText: "Church programme placeholder",
+    contributor: "Church Archive",
+    date: "2017-05-07",
+    posterUrl: "/placeholders/gallery-3.svg",
+    publicUrl: "/placeholders/gallery-3.svg",
+    approved: true,
+    featured: false,
+    mimeType: "image/svg+xml",
+    sizeBytes: 12000,
+  },
+];
+
+export const demoProgrammeEvents = [
+  {
+    id: "evt1",
+    slug: funeralEvents[0].slug,
+    title: funeralEvents[0].title,
+    eventType: "Wake Service",
+    startTime: funeralEvents[0].dateTime,
+    endTime: funeralEvents[0].dateTime,
+    timezone: funeralEvents[0].timezone,
+    venue: funeralEvents[0].venue,
+    address: funeralEvents[0].locationNote || "",
+    description:
+      funeralEvents[0].description,
+    pdfUrl: null,
+    mapUrl: "",
+    isPublished: true,
+    items: [
+      "Arrival and family reception",
+      "Opening prayer",
+      "Worship and hymn selection",
+      "Scripture reading",
+      "Tributes from family and friends",
+      "Closing blessing",
+    ],
+  },
+  {
+    id: "evt2",
+    slug: "burial-service",
+    title: funeralEvents[1].title,
+    eventType: "Burial",
+    startTime: funeralEvents[1].dateTime,
+    endTime: funeralEvents[1].dateTime,
+    timezone: funeralEvents[1].timezone,
+    venue: funeralEvents[1].venue,
+    address: "",
+    description:
+      funeralEvents[1].description,
+    pdfUrl: null,
+    mapUrl: "",
+    isPublished: true,
+    items: [
+      "Processional and welcome",
+      "Worship and opening prayer",
+      "Biography reading",
+      "Homily and intercessions",
+      "Final tributes",
+      "Burial rite",
+      "Closing comfort and family greeting",
+    ],
+  },
+];
+
+export const demoLivestreams = [
+  {
+    id: "ls1",
+    slug: "wake-live",
+    title: funeralEvents[0].title,
+    eventSlug: funeralEvents[0].slug,
+    status: "scheduled",
+    startsAt: funeralEvents[0].dateTime,
+    actualStartAt: null,
+    endsAt: funeralEvents[0].dateTime,
+    platform: "YouTube",
+    embedUrl: "https://www.youtube.com/embed/dQw4w9WgXcQ",
+    externalUrl: "https://youtube.com",
+    recordingUrl: null,
+    backupMessage: "If the embedded player does not load, use the backup link.",
+    posterUrl: "/placeholders/live-poster.svg",
+  },
+  {
+    id: "ls2",
+    slug: "burial-live",
+    title: funeralEvents[1].title,
+    eventSlug: funeralEvents[1].slug,
+    status: "scheduled",
+    startsAt: funeralEvents[1].dateTime,
+    actualStartAt: null,
+    endsAt: funeralEvents[1].dateTime,
+    platform: "Facebook",
+    embedUrl: "https://www.facebook.com/plugins/video.php?href=https%3A%2F%2Fwww.facebook.com%2Ffacebookapp%2Fvideos%2F10153231379946729%2F&show_text=false",
+    externalUrl: "https://facebook.com",
+    recordingUrl: null,
+    backupMessage: "If Facebook embedding is unavailable, use the external viewing link.",
+    posterUrl: "/placeholders/live-poster.svg",
+  },
+];
+
+export const demoCoordinatorGroups = [
+  {
+    id: "cg1",
+    title: "Officiating Ministers",
+    description: "Clergy, scripture readings and worship leadership.",
+    contacts: [{ id: "cc1", name: "Rev. Daniel Mundi", role: "Lead Minister", phone: "Private", email: "private", publicPhone: false, publicEmail: false, photoUrl: null }],
+  },
+  {
+    id: "cg2",
+    title: "Family Coordination",
+    description: "Central family communication and visiting arrangements.",
+    contacts: [{ id: "cc2", name: "Family Secretariat", role: "Coordinator", phone: "+000 000 000", email: "family@example.org", publicPhone: true, publicEmail: true, photoUrl: null }],
+  },
+  {
+    id: "cg3",
+    title: "Ushers",
+    description: "Guest reception, seating and movement support.",
+    contacts: [{ id: "cc3", name: "Usher Team Lead", role: "Lead", phone: "Shared after approval", email: "ushers@example.org", publicPhone: false, publicEmail: true, photoUrl: null }],
+  },
+  {
+    id: "cg4",
+    title: "Protocol",
+    description: "Official guest hosting and order of proceedings.",
+    contacts: [{ id: "cc4", name: "Protocol Desk", role: "Coordinator", phone: "+000 000 111", email: "protocol@example.org", publicPhone: true, publicEmail: true, photoUrl: null }],
+  },
+  {
+    id: "cg5",
+    title: "Security",
+    description: "Venue safety, parking flow and emergency coordination.",
+    contacts: [{ id: "cc5", name: "Security Lead", role: "Lead", phone: "Private", email: "private", publicPhone: false, publicEmail: false, photoUrl: null }],
+  },
+  {
+    id: "cg6",
+    title: "Transport",
+    description: "Vehicle movement and family logistics support.",
+    contacts: [{ id: "cc6", name: "Transport Desk", role: "Coordinator", phone: "+000 000 222", email: "transport@example.org", publicPhone: true, publicEmail: true, photoUrl: null }],
+  },
+  {
+    id: "cg7",
+    title: "Hospitality",
+    description: "Refreshments, visiting support and family comfort.",
+    contacts: [{ id: "cc7", name: "Hospitality Lead", role: "Lead", phone: "Private", email: "hospitality@example.org", publicPhone: false, publicEmail: false, photoUrl: null }],
+  },
+  {
+    id: "cg8",
+    title: "Media",
+    description: "Livestream, photography, video and archive collection.",
+    contacts: [{ id: "cc8", name: "Media Team", role: "Coordinator", phone: "+000 000 333", email: "media@example.org", publicPhone: true, publicEmail: true, photoUrl: null }],
+  },
+  {
+    id: "cg9",
+    title: "Medical",
+    description: "First aid and wellness coordination for event days.",
+    contacts: [{ id: "cc9", name: "Medical Desk", role: "Coordinator", phone: "Available on site only", email: "medical@example.org", publicPhone: false, publicEmail: true, photoUrl: null }],
+  },
+];
+
+export const demoTeams = [
+  "Ushering",
+  "Protocol",
+  "Security",
+  "Hospitality",
+  "Transport and Logistics",
+  "Media and Livestream",
+  "Photography and Video",
+  "Medical and First Aid",
+  "Choir and Worship",
+  "Venue Setup and Cleaning",
+  "Traditional and Family Protocol",
+  "Donations and Finance",
+  "Other",
+].map((name, index) => ({
+  id: `team-${index + 1}`,
+  name,
+  slug: name.toLowerCase().replace(/[^a-z0-9]+/g, "-"),
+  description: `${name} support team.`,
+  coordinator: "",
+  capacity: null,
+  active: true,
+  displayOrder: index + 1,
+}));
+
+export const demoDonationOptions = [
+  {
+    method: "cash",
+    title: "Cash",
+    description: "For in-person contributions that need collector, date and receipt tracking.",
+  },
+  {
+    method: "kind",
+    title: "Donation in Kind",
+    description: "Food, transport, print materials, seating, supplies and other practical support.",
+  },
+  {
+    method: "mobile-money",
+    title: "Mobile Money",
+    description: "Configurable MTN Mobile Money and Orange Money account details for public display.",
+  },
+  {
+    method: "card",
+    title: "Credit or Debit Card",
+    description: "Stripe Checkout for secure online card contributions with server-side verification.",
+  },
+];
+
+export const demoAdminSections = [
+  { slug: "site-settings", title: "Site Settings", description: "Memorial name, dates, hero copy, SEO, venue and public contact settings." },
+  { slug: "biography", title: "Biography", description: "Update biography sections and introductory copy." },
+  { slug: "timeline", title: "Timeline", description: "Maintain chronological milestones and images." },
+  { slug: "tributes", title: "Tributes", description: "Review and moderate public tribute submissions." },
+  { slug: "media", title: "Media", description: "Moderate private submissions and approved public media." },
+  { slug: "gallery-albums", title: "Gallery Albums", description: "Manage album names, categories and ordering." },
+  { slug: "programme", title: "Programme", description: "Edit programme events, items, venues and PDFs." },
+  { slug: "livestreams", title: "Livestreams", description: "Configure livestream scheduling, embeds and recordings." },
+  { slug: "coordinators", title: "Coordinators", description: "Control public/private coordinator directory details." },
+  { slug: "teams", title: "Teams", description: "Manage team definitions and capacities." },
+  { slug: "team-registrations", title: "Team Registrations", description: "Review volunteer applications and statuses." },
+  { slug: "donations", title: "Donations", description: "Track finance records and verification state." },
+  { slug: "admin-users", title: "Admin Users", description: "Assign admin roles and active state." },
+  { slug: "audit-log", title: "Audit Log", description: "Moderation, content and finance actions." },
+];
+
+export const demoAuditLog = [
+  { id: "a1", actor: "Memorial Admin", action: "Approved tribute", target: "Marforh, Angemba tribute", at: "2026-06-10 09:15 CAT" },
+  { id: "a2", actor: "Finance Coordinator", action: "Recorded mobile money pledge", target: "Donation reference MM-2026-004", at: "2026-06-12 17:40 CAT" },
+];
+
+export const demoUploadRules = {
+  imageMaxMb: 15,
+  videoMaxMb: 150,
+  documentMaxMb: 25,
+  maxFilesPerSubmission: 8,
+  acceptedImages: ["image/jpeg", "image/png", "image/webp", "image/gif"],
+  acceptedVideos: ["video/mp4", "video/webm", "video/quicktime"],
+  acceptedDocuments: ["application/pdf"],
+};

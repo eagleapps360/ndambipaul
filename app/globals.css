@@ -1,3 +1,5 @@
+@import url("https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Sora:wght@400;500;600;700;800&display=swap");
+
 :root {
   --memorial-white: #ffffff;
   --memorial-soft-white: #f8f7f3;
@@ -18,8 +20,8 @@
   --muted: rgba(23, 23, 23, 0.68);
   --line: rgba(155, 118, 35, 0.2);
   --shadow: 0 30px 70px rgba(8, 8, 8, 0.08);
-  --font-sans-body: var(--font-body), sans-serif;
-  --font-sans-heading: var(--font-heading), sans-serif;
+  --font-sans-body: "Manrope", sans-serif;
+  --font-sans-heading: "Sora", sans-serif;
 }
 
 * {

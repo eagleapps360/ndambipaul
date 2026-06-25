@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import { Manrope, Sora } from "next/font/google";
 import DevImageProbe from "@/components/DevImageProbe";
 import Header from "@/components/Header";
 import { getPublicSiteSettings } from "@/lib/content";
@@ -8,8 +7,6 @@ import { criticalMemorialImages } from "@/lib/public-image-fallbacks";
 import "./globals.css";
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
-const sora = Sora({ subsets: ["latin"], variable: "--font-heading", weight: ["400", "500", "600", "700", "800"] });
-const manrope = Manrope({ subsets: ["latin"], variable: "--font-body", weight: ["400", "500", "600", "700", "800"] });
 
 export async function generateMetadata(): Promise<Metadata> {
   assertEnvironmentReady();
@@ -63,7 +60,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
   };
 
   return (
-    <html lang="en" className={`${sora.variable} ${manrope.variable}`}>
+    <html lang="en">
       <body>
         {process.env.NODE_ENV === "development" ? <DevImageProbe paths={criticalMemorialImages} /> : null}
         <Header brandLabel={site.shortTitle} />

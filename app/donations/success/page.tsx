@@ -1,3 +1,12 @@
+import { buildPageMetadata } from "@/lib/seo";
+
+export const metadata = buildPageMetadata({
+  title: "Donation Received",
+  description: "Donation confirmation page for the Pa Ndambi memorial.",
+  path: "/donations/success",
+  noindex: true,
+});
+
 export default function DonationSuccessPage() {
   return (
     <main className="pageMain">

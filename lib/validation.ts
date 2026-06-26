@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { inspectFiles } from "@/lib/uploads";
+import { buildObjectPosition, normalizeEmail, sanitizeObjectPosition } from "@/lib/tribute-helpers";
 
 export type SubmissionType = "tribute" | "team" | "media";
 export const DEFAULT_TRIBUTE_CATEGORY = "general" as const;
@@ -16,6 +17,14 @@ export type TributeSubmissionData = {
   email: string;
   phone: string;
   message: string;
+  profileImagePosition: string;
+  additionalImageMeta: Array<{
+    clientId: string;
+    caption: string;
+    altText: string;
+    objectPosition: string;
+    sortOrder: number;
+  }>;
 };
 
 export type TributeInsertData = {
@@ -37,6 +46,9 @@ export type TributeInsertData = {
   };
   private_email: string | null;
   private_phone: string | null;
+  normalized_email: string | null;
+  profile_image_position: string;
+  edit_version: number;
   featured: false;
 };
 
@@ -109,7 +121,18 @@ const tributeInsertSchema = z.object({
   }),
   private_email: z.string().email().nullable(),
   private_phone: z.string().nullable(),
+  normalized_email: z.string().email().nullable(),
+  profile_image_position: z.string().min(3),
+  edit_version: z.number().int().min(1),
   featured: z.literal(false).default(false),
+});
+
+const imageMetaSchema = z.object({
+  clientId: z.string().min(1),
+  caption: z.string().optional().default(""),
+  altText: z.string().optional().default(""),
+  objectPosition: z.string().min(3),
+  sortOrder: z.number().int().min(0),
 });
 
 const teamSchema = z.object({
@@ -180,6 +203,26 @@ function errorsFromResult(result: { success: boolean; error?: { issues: Array<{ 
 }
 
 export async function validateTributeForm(formData: FormData): Promise<ValidationResult<TributeSubmissionData>> {
+  let parsedImageMeta: TributeSubmissionData["additionalImageMeta"] = [];
+  const rawMeta = sanitizeText(formData.get("additionalImageMeta"));
+  if (rawMeta) {
+    try {
+      const decoded = JSON.parse(rawMeta);
+      const metaParsed = z.array(imageMetaSchema).safeParse(decoded);
+      if (metaParsed.success) {
+        parsedImageMeta = metaParsed.data.map((item) => ({
+          clientId: item.clientId,
+          caption: item.caption || "",
+          altText: item.altText || "",
+          objectPosition: sanitizeObjectPosition(item.objectPosition),
+          sortOrder: item.sortOrder,
+        }));
+      }
+    } catch {
+      parsedImageMeta = [];
+    }
+  }
+
   const payload = {
     name: sanitizeText(formData.get("name")),
     relationship: sanitizeText(formData.get("relationship")),
@@ -187,6 +230,8 @@ export async function validateTributeForm(formData: FormData): Promise<Validatio
     email: sanitizeText(formData.get("email")),
     phone: sanitizeText(formData.get("phone")),
     message: sanitizeText(formData.get("message")),
+    profileImagePosition: sanitizeObjectPosition(sanitizeText(formData.get("profileImagePosition")) || buildObjectPosition(50, 50)),
+    additionalImageMeta: parsedImageMeta,
     consent: formData.get("consent") === "on",
   };
 
@@ -197,7 +242,15 @@ export async function validateTributeForm(formData: FormData): Promise<Validatio
     errors.push("CAPTCHA verification is required.");
   }
 
-  const uploads = formData.getAll("uploads").filter((item): item is File => item instanceof File && item.size > 0);
+  const profileImage = formData.get("profileImage");
+  const additionalImages = formData.getAll("additionalImages").filter((item): item is File => item instanceof File && item.size > 0);
+  const uploads = [
+    ...(profileImage instanceof File && profileImage.size > 0 ? [profileImage] : []),
+    ...additionalImages,
+  ];
+  if (additionalImages.length > 6) {
+    errors.push("Please upload no more than 6 additional tribute photographs.");
+  }
   const inspected = await inspectFiles(uploads);
   errors.push(...inspected.errors);
 
@@ -225,6 +278,9 @@ export function buildTributeInsert(data: TributeSubmissionData, reference: strin
     },
     private_email: data.email || null,
     private_phone: data.phone || null,
+    normalized_email: data.email ? normalizeEmail(data.email) : null,
+    profile_image_position: data.profileImagePosition,
+    edit_version: 1,
   });
 }
 

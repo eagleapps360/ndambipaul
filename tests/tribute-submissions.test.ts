@@ -11,6 +11,8 @@ test("tribute insert builder injects the default category and preserves the rela
       email: "friend@example.com",
       phone: "+237670000000",
       message: "Pa Ndambi's kindness shaped our family for many years.",
+      profileImagePosition: "50% 50%",
+      additionalImageMeta: [],
     },
     "tribute-ref-123",
   );
@@ -31,6 +33,8 @@ test("tribute insert builder keeps trusted submission defaults under server cont
       email: "",
       phone: "",
       message: "He welcomed every generation with steady wisdom and practical care.",
+      profileImagePosition: "50% 50%",
+      additionalImageMeta: [],
     },
     "tribute-ref-456",
   );

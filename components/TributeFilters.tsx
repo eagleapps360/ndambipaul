@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import TributeCard from "@/components/TributeCard";
 import type { TributeSummary } from "@/lib/public-types";
 
 export default function TributeFilters({
@@ -69,18 +70,7 @@ export default function TributeFilters({
 
       <div className="tributeGrid">
         {filtered.map((tribute) => (
-          <article key={tribute.slug} className="tributeCard">
-            <p>{tribute.message}</p>
-            <div className="tributeCardMeta">
-              <strong>{tribute.name}</strong>
-              <span>
-                {tribute.relationship} · {tribute.location}
-              </span>
-            </div>
-            <Link href={`/tributes/${tribute.slug}`} className="textLink">
-              Read full tribute
-            </Link>
-          </article>
+          <TributeCard key={tribute.slug} tribute={tribute} />
         ))}
       </div>
     </div>

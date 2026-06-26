@@ -1,8 +1,17 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { logoutAction } from "@/app/admin/actions";
 import { getCurrentAdminProfile } from "@/lib/auth";
 import { getVisibleAdminSections } from "@/lib/admin-data";
 import { RoleBadge } from "@/components/admin/AdminBadge";
+import { buildPageMetadata } from "@/lib/seo";
+
+export const metadata: Metadata = buildPageMetadata({
+  title: "Admin",
+  description: "Protected memorial administration area.",
+  path: "/admin",
+  noindex: true,
+});
 
 export default async function AdminLayout({ children }: { children: React.ReactNode }) {
   const profile = await getCurrentAdminProfile();

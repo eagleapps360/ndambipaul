@@ -1,11 +1,13 @@
 import { TeamForm } from "@/components/Forms";
 import SectionTitle from "@/components/SectionTitle";
 import { getActiveTeams } from "@/lib/content";
+import { buildPageMetadata } from "@/lib/seo";
 
-export const metadata = {
+export const metadata = buildPageMetadata({
   title: "Join a Team",
-  description: "Volunteer registration for funeral support teams.",
-};
+  description: "Volunteer for funeral support teams serving the Pa Ndambi memorial with warmth, dignity and care.",
+  path: "/teams",
+});
 
 export default async function TeamsPage() {
   const teams = await getActiveTeams();

@@ -1,6 +1,15 @@
+import type { Metadata } from "next";
 import { loginAction } from "@/app/admin/actions";
 import { getDemoModeNotice } from "@/lib/content";
 import { isSupabaseConfigured } from "@/lib/env";
+import { buildPageMetadata } from "@/lib/seo";
+
+export const metadata: Metadata = buildPageMetadata({
+  title: "Admin Login",
+  description: "Protected login for memorial administrators.",
+  path: "/admin/login",
+  noindex: true,
+});
 
 export default async function AdminLoginPage({
   searchParams,

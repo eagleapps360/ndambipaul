@@ -1,11 +1,13 @@
 import { DonationForm } from "@/components/Forms";
 import SectionTitle from "@/components/SectionTitle";
 import { donationOptions } from "@/lib/ui-config";
+import { buildPageMetadata } from "@/lib/seo";
 
-export const metadata = {
+export const metadata = buildPageMetadata({
   title: "Donations",
-  description: "Donation options for cash, in kind, mobile money and secure card payments.",
-};
+  description: "Support the Pa Ndambi memorial with accountable cash, in-kind, mobile money or secure card donations.",
+  path: "/donations",
+});
 
 export default function DonationsPage() {
   return (

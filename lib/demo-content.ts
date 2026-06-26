@@ -7,7 +7,7 @@ export const demoNavigation: Array<{ href: Route; label: string }> = [
   { href: "/tributes", label: "Tributes" },
   { href: "/gallery", label: "Gallery" },
   { href: "/programme", label: "Programme" },
-  { href: "/watch", label: "Watch Live" },
+  { href: "/livestreams", label: "Watch Live" },
   { href: "/teams", label: "Join a Team" },
   { href: "/donations", label: "Donations" },
   { href: "/coordinators", label: "Coordinators" },
@@ -180,6 +180,25 @@ export const demoTributes = [
     message:
       "Papa taught us that strength can be gentle. He listened before he spoke, corrected without humiliating and prayed over every turning point in our lives.",
     profileImageUrl: "/images/pa-ndambi/pa-ndambi-close-portrait.jpg",
+    profileImagePosition: "50% 30%",
+    media: [
+      {
+        id: "tr1-media-1",
+        url: "/images/pa-ndambi/pa-ndambi-beach.jpg",
+        altText: "Tribute photograph shared by Marforh, Angemba",
+        caption: "A cherished family memory by the shore.",
+        objectPosition: "50% 50%",
+        sortOrder: 1,
+      },
+      {
+        id: "tr1-media-2",
+        url: "/images/pa-ndambi/pa-ndambi-traditional-blue.jpg",
+        altText: "Pa Ndambi Paul Angemba standing in blue attire",
+        caption: "A dignified portrait remembered by the family.",
+        objectPosition: "50% 35%",
+        sortOrder: 2,
+      },
+    ],
     submittedAt: "2026-06-08T10:00:00+02:00",
     publishedAt: "2026-06-10T09:15:00+02:00",
     privateEmail: "private@example.org",
@@ -199,6 +218,17 @@ export const demoTributes = [
     message:
       "He carried a rare steadiness. Many of us sought his perspective because he had a gift for reducing confusion and calling us back to what was right.",
     profileImageUrl: "/images/pa-ndambi/pa-ndambi-close-portrait.jpg",
+    profileImagePosition: "50% 34%",
+    media: [
+      {
+        id: "tr2-media-1",
+        url: "/images/pa-ndambi/pa-ndambi-street.jpg",
+        altText: "Tribute photograph shared by Samuel Cho",
+        caption: "A thoughtful profile during later travels.",
+        objectPosition: "50% 42%",
+        sortOrder: 1,
+      },
+    ],
     submittedAt: "2026-06-10T11:00:00+02:00",
     publishedAt: "2026-06-11T08:30:00+02:00",
     privateEmail: "private@example.org",
@@ -218,6 +248,8 @@ export const demoTributes = [
     message:
       "He served with quiet conviction. He did not need attention to be faithful; his testimony was visible in consistency, kindness and reverence.",
     profileImageUrl: "/images/pa-ndambi/pa-ndambi-close-portrait.jpg",
+    profileImagePosition: "50% 36%",
+    media: [],
     submittedAt: "2026-06-12T16:45:00+02:00",
     publishedAt: "2026-06-13T08:30:00+02:00",
     privateEmail: "private@example.org",
@@ -237,6 +269,8 @@ export const demoTributes = [
     message:
       "He made every visit feel important. Even ordinary conversations became lessons in discipline, gratitude and dignity.",
     profileImageUrl: "/images/pa-ndambi/pa-ndambi-close-portrait.jpg",
+    profileImagePosition: "50% 36%",
+    media: [],
     submittedAt: "2026-06-15T16:45:00+02:00",
     publishedAt: null,
     privateEmail: "private@example.org",

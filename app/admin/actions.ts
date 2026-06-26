@@ -190,6 +190,13 @@ export async function moderateTributeAction(formData: FormData) {
           ? { moderation_status: "pending", archived_at: null }
           : { moderation_status: "archived", archived_at: new Date().toISOString(), rejection_reason: String(formData.get("reason") || "Archived by administrator.") };
   await service.from("tributes").update(patch).eq("id", id);
+  if (action === "approve") {
+    await service
+      .from("tribute_media")
+      .update({ status: "approved", approved_at: new Date().toISOString() })
+      .eq("tribute_id", id)
+      .eq("status", "pending");
+  }
   await insertAudit(profile, `tribute.${action}`, "tribute", id, `Tribute ${action}d`);
   revalidateAdminAndPublic("tributes", "gallery");
   redirect(`/admin/tributes/${id}?saved=1`);
@@ -214,6 +221,76 @@ export async function updateTributeDetailsAction(formData: FormData) {
   await insertAudit(profile, "tribute.updated", "tribute", id, "Tribute details updated");
   revalidateAdminAndPublic("tributes");
   redirect(`/admin/tributes/${id}?saved=1`);
+}
+
+export async function reviewTributeRevisionAction(formData: FormData) {
+  const profile = await requireAdminProfile();
+  if (!canManageModeration(profile) || !isSupabaseConfigured()) redirect("/admin?error=forbidden");
+  const revisionId = String(formData.get("revision_id") || "");
+  const tributeId = String(formData.get("tribute_id") || "");
+  const action = String(formData.get("action") || "reject");
+  const service = await createServerActionSupabaseClient();
+
+  const { data: revision } = await service.from("tribute_revisions").select("*").eq("id", revisionId).maybeSingle();
+  if (!revision) {
+    redirect(`/admin/tributes/${tributeId}?error=revision-missing`);
+  }
+
+  if (action === "approve") {
+    await service
+      .from("tributes")
+      .update({
+        contributor_name: revision.proposed_name,
+        relationship: revision.proposed_relationship,
+        location: revision.proposed_location,
+        tribute_message: revision.proposed_message,
+        profile_image_bucket: revision.proposed_profile_image_bucket || undefined,
+        profile_image_path: revision.proposed_profile_image_path || undefined,
+        profile_image_position: revision.proposed_profile_image_position || undefined,
+        edit_version: revision.version_number || 1,
+      })
+      .eq("id", tributeId);
+
+    await service.from("tribute_media").update({ status: "archived", archived_at: new Date().toISOString() }).eq("tribute_id", tributeId);
+
+    const { data: revisionMedia } = await service.from("tribute_revision_media").select("*").eq("revision_id", revisionId).order("sort_order");
+    if (revisionMedia?.length) {
+      await service.from("tribute_media").insert(
+        revisionMedia.map((item) => ({
+          tribute_id: tributeId,
+          storage_bucket: item.storage_bucket,
+          storage_path: item.storage_path,
+          media_type: item.media_type,
+          alt_text: item.alt_text,
+          caption: item.caption,
+          object_position: item.object_position,
+          sort_order: item.sort_order,
+          status: "approved",
+          is_profile: false,
+          approved_at: new Date().toISOString(),
+        })),
+      );
+    }
+  }
+
+  await service
+    .from("tribute_revisions")
+    .update({
+      status: action === "approve" ? "approved" : "rejected",
+      reviewed_at: new Date().toISOString(),
+      reviewed_by: profile.userId,
+    })
+    .eq("id", revisionId);
+
+  await insertAudit(
+    profile,
+    action === "approve" ? "tribute.revision.approved" : "tribute.revision.rejected",
+    "tribute_revision",
+    revisionId,
+    action === "approve" ? "Contributor tribute revision approved" : "Contributor tribute revision rejected",
+  );
+  revalidateAdminAndPublic("tributes");
+  redirect(`/admin/tributes/${tributeId}?saved=1`);
 }
 
 export async function updateMediaRecordAction(formData: FormData) {

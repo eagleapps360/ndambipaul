@@ -6,7 +6,9 @@ import SectionTitle from "@/components/SectionTitle";
 import { DonationForm, TeamForm } from "@/components/Forms";
 import EventCountdown from "@/components/EventCountdown";
 import HomePhotoConstellation from "@/components/HomePhotoConstellation";
+import JsonLd from "@/components/JsonLd";
 import { getMemorialObjectPosition } from "@/lib/memorial-images";
+import TributeCard from "@/components/TributeCard";
 import {
   getApprovedGalleryItems,
   getFeaturedTributes,
@@ -15,6 +17,15 @@ import {
   getActiveTeams,
 } from "@/lib/content";
 import { funeralDateRangeDisplay, funeralEvents } from "@/lib/events";
+import { buildPageMetadata } from "@/lib/seo";
+import { buildBreadcrumbJsonLd, buildPersonJsonLd, buildProgrammeEventJsonLd, buildWebsiteJsonLd } from "@/lib/structured-data";
+
+export const metadata = buildPageMetadata({
+  title: "Life and Legacy",
+  description:
+    "Celebrate the life and enduring legacy of Pa Ndambi Paul Angemba through his biography, tributes, gallery, funeral programme, livestreams, coordinators, volunteering and support information.",
+  path: "/",
+});
 
 export default async function HomePage() {
   const [site, featuredTributes, featuredGallery, coordinatorGroups, teams] = await Promise.all([
@@ -65,7 +76,7 @@ export default async function HomePage() {
             </div>
             <div className="memorialSecondaryActions" aria-label="Additional memorial links">
               <Link href="/programme">View Funeral Programme</Link>
-              <Link href="/watch">Watch Live</Link>
+              <Link href="/livestreams">Watch Live</Link>
             </div>
             <div className="scrollIndicator" aria-hidden="true">
               <span>Scroll to remember</span>
@@ -126,15 +137,7 @@ export default async function HomePage() {
           <SectionTitle eyebrow="Featured Tributes" title="Words from family, church and friends" />
           <div className="tributeGrid">
             {featuredTributes.map((tribute) => (
-              <article key={tribute.slug} className="tributeCard">
-                <p>{tribute.message}</p>
-                <div className="tributeCardMeta">
-                  <strong>{tribute.name}</strong>
-                  <span>
-                    {tribute.relationship} · {tribute.location}
-                  </span>
-                </div>
-              </article>
+              <TributeCard key={tribute.slug} tribute={{ ...tribute, createdAt: tribute.publishedAt || tribute.submittedAt }} compact />
             ))}
           </div>
         </section>
@@ -235,7 +238,7 @@ export default async function HomePage() {
                   </div>
                   <p className="memorialStreamCopy">Livestream link will be available here</p>
                   <div className="cardActions">
-                    <Link className="textLink" href="/watch">
+                    <Link className="textLink" href="/livestreams">
                       Open livestream page
                     </Link>
                   </div>
@@ -306,6 +309,24 @@ export default async function HomePage() {
         <p>{site.subtitle}</p>
         <Link href="/admin">Administrator area</Link>
       </footer>
+      <JsonLd
+        data={[
+          buildWebsiteJsonLd(),
+          buildPersonJsonLd(),
+          buildBreadcrumbJsonLd([
+            { name: "Home", path: "/" },
+          ]),
+          ...funeralEvents.map((event) =>
+            buildProgrammeEventJsonLd({
+              title: event.title,
+              description: event.description,
+              path: `/programme/${event.slug}`,
+              startDate: event.dateTime,
+              locationName: event.venue,
+            }),
+          ),
+        ]}
+      />
     </main>
   );
 }

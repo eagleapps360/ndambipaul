@@ -2,11 +2,13 @@ import SectionTitle from "@/components/SectionTitle";
 import GalleryLightbox from "@/components/GalleryLightbox";
 import { MediaUploadForm } from "@/components/Forms";
 import { getApprovedGalleryItems } from "@/lib/content";
+import { buildPageMetadata } from "@/lib/seo";
 
-export const metadata = {
+export const metadata = buildPageMetadata({
   title: "Gallery",
-  description: "Approved photo and video gallery with moderated public upload flow.",
-};
+  description: "Browse approved photographs and video memories of Pa Ndambi Paul Angemba, organised into moderated public gallery albums.",
+  path: "/gallery",
+});
 
 export default async function GalleryPage() {
   const items = await getApprovedGalleryItems();

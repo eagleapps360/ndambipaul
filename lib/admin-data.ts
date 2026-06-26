@@ -162,11 +162,12 @@ export async function getAdminMediaPreviewUrl(bucket: string | null, path: strin
   return data?.signedUrl || null;
 }
 
-export async function getAdminMediaPreviewMap(records: Array<{ id: string; storage_bucket?: string | null; original_storage_path?: string | null; poster_storage_path?: string | null }>) {
+export async function getAdminMediaPreviewMap(records: Array<{ id: string; storage_bucket?: string | null; original_storage_path?: string | null; poster_storage_path?: string | null; storage_path?: string | null }>) {
   const entries = await Promise.all(
     records.map(async (record) => {
       const preview =
         (await getAdminMediaPreviewUrl(record.storage_bucket || null, record.poster_storage_path || null)) ||
+        (await getAdminMediaPreviewUrl(record.storage_bucket || null, record.storage_path || null)) ||
         (await getAdminMediaPreviewUrl(record.storage_bucket || null, record.original_storage_path || null));
       return [record.id, preview] as const;
     }),
@@ -226,15 +227,17 @@ export async function getTributesAdminData(filters?: { status?: string; q?: stri
 export async function getTributeAdminDetail(id: string) {
   if (!isSupabaseConfigured()) {
     const tribute = demoTributes.find((item) => item.id === id || item.slug === id);
-    return tribute ? { tribute, media: demoMediaItems.filter((item) => item.tributeId === tribute.id) } : null;
+    return tribute ? { tribute, media: demoMediaItems.filter((item) => item.tributeId === tribute.id), revisions: [] } : null;
   }
   const supabase = await createServerSupabaseClient();
-  const [{ data: tribute }, { data: media }] = await Promise.all([
+  const [{ data: tribute }, { data: legacyMedia }, { data: tributeMedia }, { data: revisions }] = await Promise.all([
     supabase.from("tributes").select("*").eq("id", id).maybeSingle(),
     supabase.from("media_items").select("*").eq("tribute_id", id).order("display_order"),
+    supabase.from("tribute_media").select("*").eq("tribute_id", id).order("sort_order"),
+    supabase.from("tribute_revisions").select("*").eq("tribute_id", id).order("created_at", { ascending: false }),
   ]);
   if (!tribute) return null;
-  return { tribute, media: media || [] };
+  return { tribute, media: [...(tributeMedia || []), ...(legacyMedia || [])], revisions: revisions || [] };
 }
 
 export async function getMediaAdminData(filters?: { status?: string; kind?: string; q?: string } & AdminPaginationInput) {

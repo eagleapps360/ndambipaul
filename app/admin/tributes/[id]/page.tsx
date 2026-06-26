@@ -3,7 +3,7 @@ import AdminConfirmDialog from "@/components/admin/AdminConfirmDialog";
 import AdminPageHeader from "@/components/admin/AdminPageHeader";
 import AdminMediaPreview from "@/components/admin/AdminMediaPreview";
 import AdminSaveBar from "@/components/admin/AdminSaveBar";
-import { moderateTributeAction, updateTributeDetailsAction } from "@/app/admin/actions";
+import { moderateTributeAction, reviewTributeRevisionAction, updateTributeDetailsAction } from "@/app/admin/actions";
 import { AdminBackLink, QueryNotice, formatDateTime } from "@/app/admin/shared";
 import { getAdminMediaPreviewMap, getTributeAdminDetail } from "@/lib/admin-data";
 import { requireAdminProfile } from "@/lib/auth";
@@ -141,6 +141,45 @@ export default async function AdminTributeDetailPage({
       </div>
 
       <section className="adminPanelStack">
+        {detail.revisions?.length ? (
+          <article className="adminPanel">
+            <div className="adminPanelHeader">
+              <h2>Pending and past revisions</h2>
+            </div>
+            <div className="adminRecordStack">
+              {detail.revisions.map((revision: any) => (
+                <article key={revision.id} className="adminRecordCard">
+                  <p>
+                    <strong>{revision.proposed_name || tribute.contributor_name || tribute.name}</strong> · {revision.status} ·{" "}
+                    {formatDateTime(revision.created_at)}
+                  </p>
+                  <p>{revision.proposed_message || "No message supplied."}</p>
+                  {revision.status === "pending" ? (
+                    <div className="adminActionRow">
+                      <form action={reviewTributeRevisionAction}>
+                        <input type="hidden" name="revision_id" value={revision.id} />
+                        <input type="hidden" name="tribute_id" value={tribute.id} />
+                        <input type="hidden" name="action" value="approve" />
+                        <button className="button" type="submit">
+                          Approve revision
+                        </button>
+                      </form>
+                      <form action={reviewTributeRevisionAction}>
+                        <input type="hidden" name="revision_id" value={revision.id} />
+                        <input type="hidden" name="tribute_id" value={tribute.id} />
+                        <input type="hidden" name="action" value="reject" />
+                        <button className="button ghost darkButton" type="submit">
+                          Reject revision
+                        </button>
+                      </form>
+                    </div>
+                  ) : null}
+                </article>
+              ))}
+            </div>
+          </article>
+        ) : null}
+
         <article className="adminPanel">
           <div className="adminPanelHeader">
             <h2>Attached media</h2>

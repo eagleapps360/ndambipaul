@@ -14,6 +14,7 @@ import {
   demoTeams,
 } from "@/lib/demo-content";
 import { getGalleryFallbackImage, normalizeImageUrl } from "@/lib/public-image-fallbacks";
+import type { TributeImage, TributeProfileImage } from "@/lib/public-types";
 import { adminSections } from "@/lib/ui-config";
 
 const defaultLivestreamPoster = "/images/pa-ndambi/hero-pa-ndambi-blue-regalia.jpg";
@@ -29,7 +30,24 @@ export type AdminRole = "owner" | "administrator" | "moderator" | "finance" | "c
 export type SiteSettings = typeof demoSiteSettings;
 export type BiographySection = (typeof demoBiographySections)[number];
 export type TimelineEntry = (typeof demoTimeline)[number];
-export type Tribute = (typeof demoTributes)[number];
+export type Tribute = {
+  id: string;
+  slug: string;
+  status: "pending" | "approved" | "rejected" | "archived";
+  featured: boolean;
+  category: string;
+  relationship: string;
+  name: string;
+  location: string;
+  message: string;
+  profileImageUrl: string | null;
+  profileImagePosition?: string;
+  profileImage?: TributeProfileImage | null;
+  media: TributeImage[];
+  mediaCount: number;
+  submittedAt: string;
+  publishedAt: string | null;
+};
 export type MediaItem = (typeof demoMediaItems)[number];
 export type ProgrammeEvent = (typeof demoProgrammeEvents)[number];
 export type Livestream = (typeof demoLivestreams)[number];
@@ -227,9 +245,89 @@ async function createSignedUrls(items: MediaItem[]) {
   );
 }
 
+async function getApprovedTributeMediaMap(tributeIds: string[]) {
+  if (!isSupabaseConfigured() || tributeIds.length === 0) {
+    return new Map<string, TributeImage[]>();
+  }
+
+  try {
+    const supabase = createPublicSupabaseClient();
+    const { data, error } = await supabase
+      .from("tribute_media")
+      .select("id, tribute_id, storage_bucket, storage_path, alt_text, caption, object_position, sort_order, status, archived_at")
+      .in("tribute_id", tributeIds)
+      .eq("status", "approved")
+      .is("archived_at", null)
+      .eq("is_profile", false)
+      .order("sort_order");
+    if (error) throw error;
+    const records = (data || []).map((row, index) => ({
+      id: row.id,
+      tributeId: row.tribute_id,
+      url: row.storage_bucket && row.storage_path ? `private:${row.storage_bucket}:${row.storage_path}` : getGalleryFallbackImage(index),
+      altText: row.alt_text || "Tribute photograph",
+      caption: row.caption,
+      objectPosition: row.object_position || "50% 50%",
+      sortOrder: row.sort_order || 0,
+    }));
+    const service = createServiceRoleSupabaseClient();
+    const signed = await Promise.all(
+      records.map(async (record) => {
+        if (!record.url.startsWith("private:")) return record;
+        const [, bucket, ...rest] = record.url.split(":");
+        const filePath = rest.join(":");
+        const { data: signedUrl } = await service.storage.from(bucket).createSignedUrl(filePath, 60 * 60);
+        return { ...record, url: signedUrl?.signedUrl || record.url };
+      }),
+    );
+    return signed.reduce((map, row) => {
+      const list = map.get(row.tributeId) || [];
+      list.push({
+        id: row.id,
+        url: row.url,
+        altText: row.altText,
+        caption: row.caption,
+        objectPosition: row.objectPosition,
+        sortOrder: row.sortOrder,
+      });
+      map.set(row.tributeId, list);
+      return map;
+    }, new Map<string, TributeImage[]>());
+  } catch (error) {
+    logPublicLoaderError("Failed to load approved tribute media", error);
+    return new Map<string, TributeImage[]>();
+  }
+}
+
+function mapDemoTribute(tribute: (typeof demoTributes)[number]): Tribute {
+  return {
+    id: tribute.id,
+    slug: tribute.slug,
+    status: tribute.status as Tribute["status"],
+    featured: tribute.featured,
+    category: tribute.category,
+    relationship: tribute.relationship,
+    name: tribute.name,
+    location: tribute.location,
+    message: tribute.message,
+    profileImageUrl: tribute.profileImageUrl,
+    profileImagePosition: tribute.profileImagePosition || "50% 50%",
+    profileImage: tribute.profileImageUrl
+      ? {
+          url: tribute.profileImageUrl,
+          objectPosition: tribute.profileImagePosition || "50% 50%",
+        }
+      : null,
+    media: tribute.media || [],
+    mediaCount: tribute.media?.length || 0,
+    submittedAt: tribute.submittedAt,
+    publishedAt: tribute.publishedAt,
+  };
+}
+
 export async function getApprovedTributesUncached(): Promise<Tribute[]> {
   if (!isSupabaseConfigured()) {
-    return demoTributes.filter((tribute) => tribute.status === "approved");
+    return demoTributes.filter((tribute) => tribute.status === "approved").map(mapDemoTribute);
   }
   try {
     const supabase = createPublicSupabaseClient();
@@ -238,7 +336,9 @@ export async function getApprovedTributesUncached(): Promise<Tribute[]> {
       .select("*")
       .order("published_at", { ascending: false });
     if (error) throw error;
-    return (data || []).map((row) => ({
+    const rows = data || [];
+    const mediaMap = await getApprovedTributeMediaMap(rows.map((row) => row.id));
+    return rows.map((row) => ({
       id: row.id,
       slug: row.slug,
       status: "approved",
@@ -246,19 +346,24 @@ export async function getApprovedTributesUncached(): Promise<Tribute[]> {
       category: row.relationship_category,
       relationship: row.relationship,
       name: row.contributor_name,
-      location: row.location,
+      location: row.location || "",
       message: row.tribute_message,
       profileImageUrl: normalizeImageUrl(row.profile_media_url, defaultTributeImage),
+      profileImagePosition: row.profile_image_position || "50% 50%",
+      profileImage: row.profile_media_url
+        ? {
+            url: normalizeImageUrl(row.profile_media_url, defaultTributeImage),
+            objectPosition: row.profile_image_position || "50% 50%",
+          }
+        : null,
+      media: mediaMap.get(row.id) || [],
+      mediaCount: (mediaMap.get(row.id) || []).length,
       submittedAt: row.created_at,
       publishedAt: row.published_at,
-      privateEmail: "",
-      privatePhone: "",
-      rejectionReason: null,
-      archivedAt: null,
     }));
   } catch (error) {
     logPublicLoaderError("Failed to load approved tributes", error);
-    return demoTributes.filter((tribute) => tribute.status === "approved");
+    return demoTributes.filter((tribute) => tribute.status === "approved").map(mapDemoTribute);
   }
 }
 
@@ -278,13 +383,15 @@ export const getFeaturedTributes = cachedQuery(
 
 export async function getTributeBySlug(slug: string): Promise<Tribute | null> {
   if (!isSupabaseConfigured()) {
-    return demoTributes.find((tribute) => tribute.slug === slug && tribute.status === "approved") || null;
+    const tribute = demoTributes.find((item) => item.slug === slug && item.status === "approved");
+    return tribute ? mapDemoTribute(tribute) : null;
   }
   try {
     const supabase = createPublicSupabaseClient();
     const { data, error } = await supabase.from("public_tributes").select("*").eq("slug", slug).maybeSingle();
     if (error) throw error;
     if (!data) return null;
+    const mediaMap = await getApprovedTributeMediaMap([data.id]);
     return {
       id: data.id,
       slug: data.slug,
@@ -293,19 +400,25 @@ export async function getTributeBySlug(slug: string): Promise<Tribute | null> {
       category: data.relationship_category,
       relationship: data.relationship,
       name: data.contributor_name,
-      location: data.location,
+      location: data.location || "",
       message: data.tribute_message,
       profileImageUrl: normalizeImageUrl(data.profile_media_url, defaultTributeImage),
+      profileImagePosition: data.profile_image_position || "50% 50%",
+      profileImage: data.profile_media_url
+        ? {
+            url: normalizeImageUrl(data.profile_media_url, defaultTributeImage),
+            objectPosition: data.profile_image_position || "50% 50%",
+          }
+        : null,
+      media: mediaMap.get(data.id) || [],
+      mediaCount: (mediaMap.get(data.id) || []).length,
       submittedAt: data.created_at,
       publishedAt: data.published_at,
-      privateEmail: "",
-      privatePhone: "",
-      rejectionReason: null,
-      archivedAt: null,
     };
   } catch (error) {
     logPublicLoaderError("Failed to load tribute by slug", error);
-    return demoTributes.find((tribute) => tribute.slug === slug && tribute.status === "approved") || null;
+    const tribute = demoTributes.find((item) => item.slug === slug && item.status === "approved");
+    return tribute ? mapDemoTribute(tribute) : null;
   }
 }
 
@@ -369,42 +482,43 @@ export function buildCalendarLink(event: ProgrammeEvent) {
   return `https://calendar.google.com/calendar/render?${params.toString()}`;
 }
 
-export const getPublishedProgrammeEvents = cachedQuery(
-  ["public-programme"],
-  async (): Promise<ProgrammeEvent[]> => {
-    if (!isSupabaseConfigured()) {
-      return demoProgrammeEvents;
-    }
-    try {
-      const supabase = createPublicSupabaseClient();
-      const { data, error } = await supabase
-        .from("public_programme_events")
-        .select("*, programme_items:public_programme_items(label, display_order)")
-        .order("start_time", { ascending: true });
-      if (error) throw error;
-      return (data || []).map((row) => ({
-        id: row.id,
-        slug: row.slug,
-        title: row.title,
-        eventType: row.event_type,
-        startTime: row.start_time,
-        endTime: row.end_time,
-        timezone: row.timezone,
-        venue: row.venue,
-        address: row.address,
-        description: row.description,
-        pdfUrl: row.pdf_signed_url || row.pdf_url,
-        mapUrl: row.map_url,
-        isPublished: true,
-        items: (row.programme_items || []).sort((a: any, b: any) => a.display_order - b.display_order).map((item: any) => item.label),
-      }));
-    } catch (error) {
-      logPublicLoaderError("Failed to load published programme events", error);
-      return demoProgrammeEvents;
-    }
-  },
-  { revalidate: 300, tags: ["public-content", "programme"] },
-);
+export async function getPublishedProgrammeEventsUncached(): Promise<ProgrammeEvent[]> {
+  if (!isSupabaseConfigured()) {
+    return demoProgrammeEvents;
+  }
+  try {
+    const supabase = createPublicSupabaseClient();
+    const { data, error } = await supabase
+      .from("public_programme_events")
+      .select("*, programme_items:public_programme_items(label, display_order)")
+      .order("start_time", { ascending: true });
+    if (error) throw error;
+    return (data || []).map((row) => ({
+      id: row.id,
+      slug: row.slug,
+      title: row.title,
+      eventType: row.event_type,
+      startTime: row.start_time,
+      endTime: row.end_time,
+      timezone: row.timezone,
+      venue: row.venue,
+      address: row.address,
+      description: row.description,
+      pdfUrl: row.pdf_signed_url || row.pdf_url,
+      mapUrl: row.map_url,
+      isPublished: true,
+      items: (row.programme_items || []).sort((a: any, b: any) => a.display_order - b.display_order).map((item: any) => item.label),
+    }));
+  } catch (error) {
+    logPublicLoaderError("Failed to load published programme events", error);
+    return demoProgrammeEvents;
+  }
+}
+
+export const getPublishedProgrammeEvents = cachedQuery(["public-programme"], getPublishedProgrammeEventsUncached, {
+  revalidate: 300,
+  tags: ["public-content", "programme"],
+});
 
 export async function getProgramme(slug: string) {
   const events = await getPublishedProgrammeEvents();

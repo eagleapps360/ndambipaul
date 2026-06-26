@@ -1,12 +1,15 @@
+import Link from "next/link";
 import SectionTitle from "@/components/SectionTitle";
 import TributeFilters from "@/components/TributeFilters";
 import { TributeForm } from "@/components/Forms";
 import { getApprovedTributes } from "@/lib/content";
+import { buildPageMetadata } from "@/lib/seo";
 
-export const metadata = {
+export const metadata = buildPageMetadata({
   title: "Tributes",
-  description: "Approved public tributes and moderated tribute submission form.",
-};
+  description: "Read approved public tributes and share a moderated message, memory or photograph in honour of Pa Ndambi Paul Angemba.",
+  path: "/tributes",
+});
 
 export default async function TributesPage({
   searchParams,
@@ -22,10 +25,14 @@ export default async function TributesPage({
 
   return (
     <main className="pageMain">
-      <section className="pageHero">
-        <p className="kicker">Tribute Wall</p>
-        <h1>Messages of comfort, gratitude and remembrance</h1>
-        <p>Only approved tributes appear publicly. Contact details remain private for administrators.</p>
+      <section className="pageHero tributeWallHero">
+        <h1>Tributes</h1>
+        <p>Words, photographs and memories shared in honour of Pa Ndambi Paul Angemba.</p>
+        <div className="pageHeroActions">
+          <Link href="/tributes/manage" className="textLink">
+            Edit your tribute
+          </Link>
+        </div>
       </section>
       <section className="section splitLayout">
         <div>
@@ -39,7 +46,7 @@ export default async function TributesPage({
           />
         </div>
         <div>
-          <SectionTitle eyebrow="Submit a Tribute" title="Send words, photos and video clips for review" copy="All new submissions default to pending, include friendly validation and support multiple uploads." />
+          <SectionTitle eyebrow="Submit a Tribute" title="Send words and photographs for review" copy="New or updated tributes remain moderated before appearing publicly, and private contact details stay hidden from the public website." />
           <TributeForm />
         </div>
       </section>

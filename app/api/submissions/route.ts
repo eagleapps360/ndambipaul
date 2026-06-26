@@ -15,6 +15,7 @@ import {
 } from "@/lib/validation";
 import { isSupabaseConfigured } from "@/lib/env";
 import { inspectFiles } from "@/lib/uploads";
+import { sanitizeObjectPosition } from "@/lib/tribute-helpers";
 
 function buildReference(prefix: string) {
   return `${prefix}-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 8)}`;
@@ -59,6 +60,48 @@ async function uploadPrivateFiles(folder: string, files: File[]) {
     });
   }
   return { errors: [], uploads };
+}
+
+async function uploadTributeImage(folder: string, file: File) {
+  const inspected = await inspectFiles([file]);
+  if (inspected.errors.length) {
+    return { error: inspected.errors[0], upload: null as null | Record<string, unknown> };
+  }
+  const item = inspected.metadata[0];
+  if (!item || item.kind !== "image") {
+    return { error: "Only image uploads are supported here.", upload: null };
+  }
+  if (!isSupabaseConfigured()) {
+    return {
+      error: null,
+      upload: {
+        storage_bucket: "memorial-private-submissions",
+        storage_path: `demo:${folder}/${item.file.name}`,
+        mime_type: item.mimeType,
+        extension: item.extension,
+        file_size: item.sizeBytes,
+      },
+    };
+  }
+  const service = createServiceRoleSupabaseClient();
+  const filePath = `${folder}/${Date.now()}-${item.file.name.replace(/\s+/g, "-")}`;
+  const result = await service.storage.from("memorial-private-submissions").upload(filePath, item.file, {
+    contentType: item.mimeType,
+    upsert: false,
+  });
+  if (result.error) {
+    return { error: result.error.message, upload: null };
+  }
+  return {
+    error: null,
+    upload: {
+      storage_bucket: "memorial-private-submissions",
+      storage_path: filePath,
+      mime_type: item.mimeType,
+      extension: item.extension,
+      file_size: item.sizeBytes,
+    },
+  };
 }
 
 function createSubmissionFailureResponse(message: string) {
@@ -108,11 +151,6 @@ export async function POST(request: Request) {
   const service = createServiceRoleSupabaseClient();
   if (type === "tribute") {
     const tributeData = result.data as TributeSubmissionData;
-    const files = formData.getAll("uploads").filter((item): item is File => item instanceof File && item.size > 0);
-    const uploadResult = await uploadPrivateFiles(`tributes/${reference}`, files);
-    if (uploadResult.errors.length) {
-      return NextResponse.json({ errors: uploadResult.errors }, { status: 400 });
-    }
     const tributeInsert = buildTributeInsert(tributeData, reference);
     const { data: tribute, error } = await service
       .from("tributes")
@@ -123,18 +161,67 @@ export async function POST(request: Request) {
       console.error("TRIBUTE_CREATE_FAILED", { code: error.code, message: error.message, reference });
       return createSubmissionFailureResponse(TRIBUTE_SUBMISSION_FAILURE_MESSAGE);
     }
-    if (uploadResult.uploads.length) {
-      await service.from("media_items").insert(
-        uploadResult.uploads.map((upload, index) => ({
-          ...upload,
+
+    const profileImage = formData.get("profileImage");
+    const additionalImages = formData.getAll("additionalImages").filter((item): item is File => item instanceof File && item.size > 0);
+    const additionalMeta = JSON.parse(String(formData.get("additionalImageMeta") || "[]")) as Array<{
+      caption?: string;
+      altText?: string;
+      objectPosition?: string;
+      sortOrder?: number;
+    }>;
+
+    if (profileImage instanceof File && profileImage.size > 0) {
+      const profileUpload = await uploadTributeImage(`tributes/${tribute.id}/profile`, profileImage);
+      if (profileUpload.error) {
+        return NextResponse.json({ errors: [profileUpload.error] }, { status: 400 });
+      }
+      await service.from("tribute_media").insert({
+        tribute_id: tribute.id,
+        storage_bucket: profileUpload.upload?.storage_bucket,
+        storage_path: profileUpload.upload?.storage_path,
+        media_type: "image",
+        alt_text: `${tributeData.name} tribute profile image`,
+        caption: "Contributor profile photograph",
+        object_position: sanitizeObjectPosition(tributeData.profileImagePosition),
+        sort_order: 0,
+        status: "pending",
+        is_profile: true,
+      });
+      await service
+        .from("tributes")
+        .update({
+          profile_image_bucket: profileUpload.upload?.storage_bucket,
+          profile_image_path: profileUpload.upload?.storage_path,
+          profile_image_position: sanitizeObjectPosition(tributeData.profileImagePosition),
+        })
+        .eq("id", tribute.id);
+    }
+
+    if (additionalImages.length) {
+      const records: Array<Record<string, unknown>> = [];
+      for (const [index, file] of additionalImages.entries()) {
+        const upload = await uploadTributeImage(`tributes/${tribute.id}/media`, file);
+        if (upload.error) {
+          return NextResponse.json({ errors: [upload.error] }, { status: 400 });
+        }
+        const meta = additionalMeta[index] || {};
+        records.push({
           tribute_id: tribute.id,
-          contributor_name: tributeData.name,
-          caption: index === 0 ? "Profile or tribute upload" : "Additional tribute media",
-          moderation_status: "pending",
-          featured: false,
-          display_order: index + 1,
-        })),
-      );
+          storage_bucket: upload.upload?.storage_bucket,
+          storage_path: upload.upload?.storage_path,
+          media_type: "image",
+          alt_text: meta.altText || `Tribute photograph shared by ${tributeData.name}`,
+          caption: meta.caption || null,
+          object_position: sanitizeObjectPosition(meta.objectPosition),
+          sort_order: Number(meta.sortOrder || index),
+          status: "pending",
+          is_profile: false,
+        });
+      }
+      if (records.length) {
+        await service.from("tribute_media").insert(records);
+      }
     }
     revalidateTag("tributes", "max");
     return NextResponse.json({ ok: true, status: "pending", reference }, { status: 202 });

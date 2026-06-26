@@ -1,7 +1,9 @@
 "use client";
 
-import { FormEvent, useState } from "react";
+import { FormEvent, useMemo, useState } from "react";
+import ImagePositionEditor from "@/components/media/ImagePositionEditor";
 import SubmissionSuccess, { type SubmissionSuccessProps } from "@/components/SubmissionSuccess";
+import { buildObjectPosition } from "@/lib/tribute-helpers";
 import { donationOptions, uploadRules } from "@/lib/ui-config";
 import type { TeamDefinition } from "@/lib/public-types";
 
@@ -31,6 +33,13 @@ export function TributeForm() {
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<SuccessState>(null);
   const [submitting, setSubmitting] = useState(false);
+  const [profileImage, setProfileImage] = useState<File | null>(null);
+  const [profilePosition, setProfilePosition] = useState({ x: 50, y: 50 });
+  const [additionalImages, setAdditionalImages] = useState<
+    Array<{ id: string; file: File; previewUrl: string; caption: string; altText: string; x: number; y: number }>
+  >([]);
+
+  const profilePreviewUrl = useMemo(() => (profileImage ? URL.createObjectURL(profileImage) : null), [profileImage]);
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -39,9 +48,31 @@ export function TributeForm() {
     const form = event.currentTarget;
     const formData = new FormData(form);
     formData.set("type", "tribute");
+    if (profileImage) {
+      formData.set("profileImage", profileImage);
+    }
+    additionalImages.forEach((item) => {
+      formData.append("additionalImages", item.file);
+    });
+    formData.set("profileImagePosition", buildObjectPosition(profilePosition.x, profilePosition.y));
+    formData.set(
+      "additionalImageMeta",
+      JSON.stringify(
+        additionalImages.map((item, index) => ({
+          clientId: item.id,
+          caption: item.caption,
+          altText: item.altText,
+          objectPosition: buildObjectPosition(item.x, item.y),
+          sortOrder: index,
+        })),
+      ),
+    );
     const response = await submitForm("/api/submissions", formData);
     if (response.ok) {
       form.reset();
+      setProfileImage(null);
+      setAdditionalImages([]);
+      setProfilePosition({ x: 50, y: 50 });
       setSuccess({
         title: "Tribute received",
         message: "Thank you for sharing this memory. Your tribute and media have been received and will appear after family review.",
@@ -60,6 +91,19 @@ export function TributeForm() {
 
   if (success) {
     return <SubmissionSuccess {...success} />;
+  }
+
+  function moveAdditionalImage(id: string, direction: -1 | 1) {
+    setAdditionalImages((current) => {
+      const index = current.findIndex((item) => item.id === id);
+      if (index < 0) return current;
+      const nextIndex = index + direction;
+      if (nextIndex < 0 || nextIndex >= current.length) return current;
+      const copy = [...current];
+      const [item] = copy.splice(index, 1);
+      copy.splice(nextIndex, 0, item);
+      return copy;
+    });
   }
 
   return (
@@ -91,18 +135,121 @@ export function TributeForm() {
           <input name="phone" placeholder="Visible to administrators only" />
         </label>
         <label>
-          Profile image
-          <input type="file" name="uploads" accept={uploadRules.acceptedImages.join(",")} />
+          Profile photograph
+          <input
+            type="file"
+            name="profileImage"
+            accept={uploadRules.acceptedImages.join(",")}
+            onChange={(event) => setProfileImage(event.target.files?.[0] || null)}
+          />
         </label>
       </div>
       <label>
         Your tribute
         <textarea required rows={6} name="message" />
       </label>
+      {profileImage ? (
+        <ImagePositionEditor
+          label="Profile image focus"
+          imageUrl={profilePreviewUrl}
+          x={profilePosition.x}
+          y={profilePosition.y}
+          onXChange={(value) => setProfilePosition((current) => ({ ...current, x: value }))}
+          onYChange={(value) => setProfilePosition((current) => ({ ...current, y: value }))}
+        />
+      ) : null}
       <label>
-        Additional photos or video clips
-        <input type="file" name="uploads" accept={`${uploadRules.acceptedImages.join(",")},${uploadRules.acceptedVideos.join(",")}`} multiple />
+        Additional tribute photographs
+        <input
+          type="file"
+          name="additionalImages"
+          accept={uploadRules.acceptedImages.join(",")}
+          multiple
+          onChange={(event) => {
+            const files = Array.from(event.target.files || []).slice(0, 6);
+            setAdditionalImages((current) => [
+              ...current,
+              ...files.map((file, index) => ({
+                id: `${file.name}-${file.size}-${Date.now()}-${index}`,
+                file,
+                previewUrl: URL.createObjectURL(file),
+                caption: "",
+                altText: "",
+                x: 50,
+                y: 50,
+              })),
+            ].slice(0, 6));
+            event.currentTarget.value = "";
+          }}
+        />
       </label>
+      {additionalImages.length ? (
+        <div className="tributeComposerList">
+          {additionalImages.map((item, index) => (
+            <article key={item.id} className="tributeComposerCard">
+              <div className="tributeComposerCardHeader">
+                <strong>Photo {index + 1}</strong>
+                <div className="tributeComposerActions">
+                  <button type="button" className="button ghost" onClick={() => moveAdditionalImage(item.id, -1)}>
+                    Up
+                  </button>
+                  <button type="button" className="button ghost" onClick={() => moveAdditionalImage(item.id, 1)}>
+                    Down
+                  </button>
+                  <button
+                    type="button"
+                    className="button ghost"
+                    onClick={() => setAdditionalImages((current) => current.filter((entry) => entry.id !== item.id))}
+                  >
+                    Remove
+                  </button>
+                </div>
+              </div>
+              <ImagePositionEditor
+                label={`Photo ${index + 1} focus`}
+                imageUrl={item.previewUrl}
+                x={item.x}
+                y={item.y}
+                onXChange={(value) =>
+                  setAdditionalImages((current) =>
+                    current.map((entry) => (entry.id === item.id ? { ...entry, x: value } : entry)),
+                  )
+                }
+                onYChange={(value) =>
+                  setAdditionalImages((current) =>
+                    current.map((entry) => (entry.id === item.id ? { ...entry, y: value } : entry)),
+                  )
+                }
+              />
+              <div className="formGrid">
+                <label>
+                  Caption
+                  <input
+                    value={item.caption}
+                    onChange={(event) =>
+                      setAdditionalImages((current) =>
+                        current.map((entry) => (entry.id === item.id ? { ...entry, caption: event.target.value } : entry)),
+                      )
+                    }
+                  />
+                </label>
+                <label>
+                  Alt text
+                  <input
+                    value={item.altText}
+                    placeholder="Tribute photograph"
+                    onChange={(event) =>
+                      setAdditionalImages((current) =>
+                        current.map((entry) => (entry.id === item.id ? { ...entry, altText: event.target.value } : entry)),
+                      )
+                    }
+                  />
+                </label>
+              </div>
+            </article>
+          ))}
+        </div>
+      ) : null}
       <label className="check">
         <input type="checkbox" name="consent" required /> I have permission to share this content and understand it will be reviewed before publication.
       </label>

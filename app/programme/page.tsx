@@ -1,11 +1,13 @@
 import Link from "next/link";
 import SectionTitle from "@/components/SectionTitle";
 import { funeralEvents } from "@/lib/events";
+import { buildPageMetadata } from "@/lib/seo";
 
-export const metadata = {
+export const metadata = buildPageMetadata({
   title: "Programme",
-  description: "Confirmed funeral programme information for the wake service and burial service of Pa Ndambi Paul Angemba.",
-};
+  description: "Confirmed funeral programme information for the wake service and burial service of Pa Ndambi Paul Angemba in Mbengwi and Oshie.",
+  path: "/programme",
+});
 
 export default async function ProgrammePage() {
   return (

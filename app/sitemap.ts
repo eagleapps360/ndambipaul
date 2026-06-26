@@ -1,19 +1,18 @@
 import type { MetadataRoute } from "next";
-import { getApprovedTributes, getPublishedProgrammeEvents } from "@/lib/content";
-import { navigation } from "@/lib/ui-config";
+import { getApprovedTributesUncached, getPublishedProgrammeEventsUncached } from "@/lib/content";
+import { absoluteUrl } from "@/lib/seo";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const base = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
-  const [programmeEvents, tributes] = await Promise.all([getPublishedProgrammeEvents(), getApprovedTributes()]);
-  const staticRoutes = navigation.map((item) => ({
-    url: `${base}${item.href}`,
+  const [programmeEvents, tributes] = await Promise.all([getPublishedProgrammeEventsUncached(), getApprovedTributesUncached()]);
+  const staticRoutes = ["/", "/biography", "/tributes", "/gallery", "/programme", "/livestreams", "/teams", "/donations", "/coordinators"].map((path) => ({
+    url: absoluteUrl(path),
     lastModified: new Date(),
   }));
   const programmeRoutes = programmeEvents.map((event) => ({
-    url: `${base}/programme/${event.slug}`,
+    url: absoluteUrl(`/programme/${event.slug}`),
     lastModified: new Date(event.startTime),
   }));
-  const tributeRoutes = tributes.map((tribute) => ({ url: `${base}/tributes/${tribute.slug}`, lastModified: new Date(tribute.submittedAt) }));
+  const tributeRoutes = tributes.map((tribute) => ({ url: absoluteUrl(`/tributes/${tribute.slug}`), lastModified: new Date(tribute.publishedAt || tribute.submittedAt) }));
 
   return [...staticRoutes, ...programmeRoutes, ...tributeRoutes];
 }

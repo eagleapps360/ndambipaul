@@ -1,10 +1,12 @@
 import SectionTitle from "@/components/SectionTitle";
 import { getPublicCoordinators } from "@/lib/content";
+import { buildPageMetadata } from "@/lib/seo";
 
-export const metadata = {
+export const metadata = buildPageMetadata({
   title: "Coordinators",
-  description: "Coordinator groups and public contact details where explicitly approved.",
-};
+  description: "View public-facing coordinator groups and approved contact details supporting the Pa Ndambi memorial arrangements.",
+  path: "/coordinators",
+});
 
 export default async function CoordinatorsPage() {
   const coordinatorGroups = await getPublicCoordinators();

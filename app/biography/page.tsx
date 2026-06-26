@@ -1,52 +1,114 @@
+import Link from "next/link";
+import AnimatedBiographyHeading from "@/components/AnimatedBiographyHeading";
+import BiographyImageFrame from "@/components/BiographyImageFrame";
+import JsonLd from "@/components/JsonLd";
 import Reveal from "@/components/Reveal";
-import SectionTitle from "@/components/SectionTitle";
-import { getPublishedBiography, getPublishedTimeline } from "@/lib/content";
+import { biographyHero, biographyOpening, biographySections } from "@/lib/biography-content";
+import { buildPageMetadata } from "@/lib/seo";
+import { buildBreadcrumbJsonLd, buildPersonJsonLd } from "@/lib/structured-data";
 
-export const metadata = {
+export const metadata = buildPageMetadata({
   title: "Biography",
-  description: "Biography and life timeline for Pa Ndambi Paul Angemba.",
-};
+  description: "The life story of Pa Ndambi Paul Angemba, teacher, father, mentor, Christian servant and Scout leader.",
+  path: "/biography",
+});
 
 export default async function BiographyPage() {
-  const [biographySections, timeline] = await Promise.all([getPublishedBiography(), getPublishedTimeline()]);
   return (
-    <main className="pageMain">
-      <section className="pageHero">
-        <p className="kicker">Biography</p>
-        <h1>The life and legacy of Pa Ndambi Paul Angemba</h1>
-        <p>A data-driven life story arranged in chapters the family can refine from the administration area.</p>
+    <main className="pageMain biographyPage">
+      <section className="pageHero biographyHero">
+        <div className="biographyHeroGlow biographyHeroGlowOne" aria-hidden="true" />
+        <div className="biographyHeroGlow biographyHeroGlowTwo" aria-hidden="true" />
+        <div className="biographyHeroGrid">
+          <div className="biographyHeroCopy">
+            <p className="kicker biographyHeroKicker">{biographyHero.kicker}</p>
+            <h1>
+              <span>The Life Story of</span>
+              <strong>{biographyHero.title}</strong>
+            </h1>
+            <p className="biographyHeroSubtitle">{biographyHero.subtitle}</p>
+            <p className="biographyHeroDates">{biographyHero.dates}</p>
+          </div>
+          <div className="biographyHeroFigure">
+            <BiographyImageFrame image={biographyHero.image} priority sizes="(max-width: 900px) 86vw, 34vw" />
+          </div>
+        </div>
       </section>
 
       <Reveal>
-        <section className="section readingGrid">
-          <div>
-            <SectionTitle eyebrow="Life Story" title="A faithful life across family, work, faith and community" />
-          </div>
-          <div className="biographyStack">
-            {biographySections.map((section) => (
-              <article key={section.id} className="readingCard">
-                <h2>{section.title}</h2>
-                <p>{section.body}</p>
-              </article>
+        <section className="section biographyOpeningCard">
+          <AnimatedBiographyHeading
+            chapter={biographyOpening.chapter}
+            title={biographyOpening.title}
+            shimmerWord={biographyOpening.shimmerWord}
+          />
+          <div className="biographyOpeningText">
+            {biographyOpening.paragraphs.map((paragraph) => (
+              <p key={paragraph}>{paragraph}</p>
             ))}
           </div>
         </section>
       </Reveal>
 
+      {biographySections.map((section) => {
+        const imagePlacement = section.imagePlacement || "right";
+
+        return (
+          <Reveal key={section.id}>
+            <section className={`section biographyStorySection biographyStorySection${imagePlacement === "left" ? "ImageLeft" : "ImageRight"}`}>
+              <div className="biographyStoryMedia">
+                {section.image ? (
+                  <BiographyImageFrame image={section.image} sizes="(max-width: 768px) 100vw, 45vw" />
+                ) : (
+                  <div className="biographyPlaceholder" role="img" aria-label={`Awaiting image assignment for ${section.title}`}>
+                    <span className="biographyPlaceholderChapter">{section.chapter}</span>
+                    <strong>Awaiting image assignment</strong>
+                    <p>A future family photograph can be attached to this chapter without changing the page layout.</p>
+                  </div>
+                )}
+              </div>
+              <div className="biographyStoryCopy">
+                <AnimatedBiographyHeading chapter={section.chapter} title={section.title} shimmerWord={section.shimmerWord} />
+                <div className="biographyParagraphs">
+                  {section.paragraphs.map((paragraph) => (
+                    <p key={paragraph}>{paragraph}</p>
+                  ))}
+                </div>
+              </div>
+            </section>
+          </Reveal>
+        );
+      })}
+
       <Reveal>
-        <section className="section">
-          <SectionTitle eyebrow="Timeline" title="Chronological milestones" />
-          <div className="timelineRail">
-            {timeline.map((item) => (
-              <article key={item.year} className="timelineCard">
-                <span>{item.year}</span>
-                <h3>{item.title}</h3>
-                <p>{item.description}</p>
-              </article>
-            ))}
+        <section className="section biographyLinksSection">
+          <AnimatedBiographyHeading chapter="09" title="Continue Remembering" shimmerWord="Remembering" align="center" />
+          <p className="biographyLinksIntro">
+            Explore more photographs and share words of gratitude, memory and comfort with the family.
+          </p>
+          <div className="biographyLinkGrid">
+            <Link className="biographyLinkCard" href="/gallery">
+              <span>Gallery</span>
+              <strong>Open the family archive</strong>
+              <p>View photographs and visual memories gathered in honour of Pa Ndambi Paul Angemba.</p>
+            </Link>
+            <Link className="biographyLinkCard" href="/tributes">
+              <span>Tributes</span>
+              <strong>Read and share reflections</strong>
+              <p>Visit the tribute space to remember his life through messages from family, church and friends.</p>
+            </Link>
           </div>
         </section>
       </Reveal>
+      <JsonLd
+        data={[
+          buildPersonJsonLd(),
+          buildBreadcrumbJsonLd([
+            { name: "Home", path: "/" },
+            { name: "Biography", path: "/biography" },
+          ]),
+        ]}
+      />
     </main>
   );
 }

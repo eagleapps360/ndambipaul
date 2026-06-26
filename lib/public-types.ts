@@ -9,13 +9,32 @@ export type TeamDefinition = {
   displayOrder: number;
 };
 
+export type TributeImage = {
+  id: string;
+  url: string;
+  altText: string;
+  caption?: string | null;
+  objectPosition: string;
+  sortOrder: number;
+};
+
+export type TributeProfileImage = {
+  url: string;
+  objectPosition: string;
+};
+
 export type TributeSummary = {
+  id: string;
   slug: string;
   category: string;
   relationship: string;
   name: string;
   location: string;
   message: string;
+  createdAt?: string;
+  profileImage?: TributeProfileImage | null;
+  media?: TributeImage[];
+  mediaCount?: number;
 };
 
 export type GalleryItemPublic = {

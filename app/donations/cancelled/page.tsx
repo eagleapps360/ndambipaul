@@ -1,3 +1,12 @@
+import { buildPageMetadata } from "@/lib/seo";
+
+export const metadata = buildPageMetadata({
+  title: "Donation Cancelled",
+  description: "Donation cancellation page for the Pa Ndambi memorial.",
+  path: "/donations/cancelled",
+  noindex: true,
+});
+
 export default function DonationCancelledPage() {
   return (
     <main className="pageMain">

@@ -895,16 +895,227 @@ textarea:focus-visible {
   grid-template-columns: repeat(2, minmax(0, 1fr));
 }
 
-.tributeCard p {
-  padding: 1.5rem 1.5rem 0;
+.tributeCard {
+  display: grid;
+  gap: 1rem;
+  padding: 1.4rem;
+}
+
+.tributeCardTop,
+.tributeDetailIdentity {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 1rem;
+  align-items: center;
+}
+
+.tributeCardHeading,
+.tributeDetailByline {
+  display: grid;
+  gap: 0.25rem;
+}
+
+.tributeCardHeading strong,
+.tributeDetailByline strong {
+  font-family: var(--font-sans-heading);
+  font-size: 1.08rem;
+}
+
+.tributeCardMessage {
+  margin: 0;
   font-size: 1.03rem;
+}
+
+.tributeAvatar,
+.tributeDetailProfile {
+  position: relative;
+  overflow: hidden;
+  width: 4rem;
+  height: 4rem;
+  border-radius: 999px;
+  border: 1px solid rgba(201, 164, 76, 0.35);
+  background: linear-gradient(145deg, rgba(255, 255, 255, 0.98), rgba(247, 241, 226, 0.92));
+  box-shadow: 0 14px 30px rgba(8, 8, 8, 0.08);
+}
+
+.tributeDetailProfile {
+  width: 6rem;
+  height: 6rem;
+}
+
+.tributeAvatarPhoto {
+  object-fit: cover;
+}
+
+.tributeAvatarFallback {
+  display: grid;
+  place-items: center;
+  color: var(--memorial-deep-gold);
+  font-family: var(--font-sans-heading);
+  font-weight: 700;
+}
+
+.tributeAvatarFallback span {
+  font-size: 1.25rem;
+}
+
+.tributeCardPreview {
+  position: relative;
+  overflow: hidden;
+  min-height: 14rem;
+  border-radius: 1.2rem;
+  background: linear-gradient(145deg, rgba(255, 255, 255, 0.98), rgba(247, 241, 226, 0.92));
+  border: 1px solid rgba(201, 164, 76, 0.22);
+}
+
+.tributePreviewPhoto {
+  object-fit: cover;
+}
+
+.tributePreviewMore {
+  position: absolute;
+  right: 0.9rem;
+  bottom: 0.9rem;
+  padding: 0.35rem 0.7rem;
+  border-radius: 999px;
+  background: rgba(8, 8, 8, 0.72);
+  color: var(--white);
+  font-size: 0.78rem;
 }
 
 .tributeCardMeta {
   display: flex;
-  flex-direction: column;
-  padding: 1.2rem 1.5rem 1.5rem;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding-top: 0.8rem;
   border-top: 1px solid var(--line);
+}
+
+.tributeCardMeta small {
+  color: var(--muted);
+}
+
+.tributeWallHero,
+.tributeDetailHero {
+  display: grid;
+  gap: 0.9rem;
+}
+
+.pageHeroActions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.tributeDetailShell {
+  display: grid;
+  gap: 2rem;
+}
+
+.tributeDetailCard {
+  display: grid;
+  gap: 1.4rem;
+}
+
+.tributeDetailGallery {
+  display: grid;
+  gap: 1.2rem;
+}
+
+.tributeMediaGrid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1rem;
+}
+
+.tributeMediaCard {
+  display: grid;
+  gap: 0.75rem;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  text-align: left;
+  cursor: pointer;
+}
+
+.tributeMediaThumb,
+.tributeLightboxImage {
+  position: relative;
+  overflow: hidden;
+  min-height: 16rem;
+  border-radius: 1.2rem;
+  background: linear-gradient(145deg, rgba(255, 255, 255, 0.98), rgba(247, 241, 226, 0.92));
+  border: 1px solid rgba(201, 164, 76, 0.22);
+}
+
+.tributeMediaThumbImage {
+  object-fit: cover;
+}
+
+.tributeMediaCard p {
+  margin: 0;
+  color: var(--muted);
+}
+
+.tributeLightboxFullImage {
+  object-fit: contain;
+}
+
+.imagePositionEditor,
+.tributeComposerCard {
+  display: grid;
+  gap: 1rem;
+  padding: 1rem;
+  border: 1px solid var(--line);
+  border-radius: 1.25rem;
+  background: rgba(255, 253, 250, 0.8);
+}
+
+.imagePositionEditorHeader,
+.tributeComposerCardHeader,
+.tributeComposerActions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+
+.imagePositionPreview {
+  position: relative;
+  overflow: hidden;
+  min-height: 14rem;
+  border-radius: 1rem;
+  background: linear-gradient(145deg, rgba(255, 255, 255, 0.98), rgba(247, 241, 226, 0.92));
+  border: 1px solid rgba(201, 164, 76, 0.22);
+}
+
+.imagePositionPreviewImage {
+  object-fit: cover;
+}
+
+.imagePositionPreviewEmpty {
+  display: grid;
+  place-items: center;
+  min-height: 14rem;
+  padding: 1rem;
+  text-align: center;
+  color: var(--muted);
+}
+
+.imagePositionControls {
+  display: grid;
+  gap: 0.8rem;
+}
+
+.imagePositionControls label {
+  display: grid;
+  gap: 0.4rem;
+}
+
+.tributeComposerList {
+  display: grid;
+  gap: 1rem;
 }
 
 .tributeFilterShell {
@@ -995,6 +1206,7 @@ textarea:focus-visible {
 }
 
 .success,
+.successBox,
 .errorBox,
 .infoBox {
   margin-top: 1rem;
@@ -1003,6 +1215,11 @@ textarea:focus-visible {
 }
 
 .success {
+  background: rgba(46, 125, 77, 0.12);
+  color: #185335;
+}
+
+.successBox {
   background: rgba(46, 125, 77, 0.12);
   color: #185335;
 }
@@ -2391,12 +2608,11 @@ textarea:focus-visible {
   }
 
   .previewGrid,
-  .memorialEventGrid,
-  .memorialStreamGrid,
   .timelineRail,
   .programmeList,
   .coordinatorGrid,
   .galleryGrid,
+  .tributeMediaGrid,
   .adminSectionGrid,
   .statsGrid,
   .adminSplitGrid,
@@ -2521,6 +2737,7 @@ textarea:focus-visible {
   .memorialFacts,
   .eventCountdownGrid,
   .tributeGrid,
+  .tributeMediaGrid,
   .formGrid,
   .detailMediaGrid,
   .programmeList,
@@ -2557,6 +2774,14 @@ textarea:focus-visible {
 
   .siteLogoText {
     font-size: 0.88rem;
+  }
+
+  .tributeCardMeta,
+  .tributeComposerCardHeader,
+  .tributeComposerActions,
+  .imagePositionEditorHeader {
+    flex-direction: column;
+    align-items: flex-start;
   }
 
   .submissionSuccess {
@@ -2625,6 +2850,20 @@ textarea:focus-visible {
   }
 }
 
+@media (max-width: 1080px) {
+  .memorialEventGrid,
+  .memorialStreamGrid,
+  .tributeGrid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (min-width: 721px) and (max-width: 1080px) {
+  .tributeGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;
@@ -2664,5 +2903,531 @@ textarea:focus-visible {
   .memoryCard {
     opacity: 1;
     transform: none;
+  }
+}
+
+.biographyPage {
+  background:
+    radial-gradient(circle at top left, rgba(201, 164, 76, 0.16), transparent 24%),
+    linear-gradient(180deg, #fffdfa 0%, #f8f7f3 52%, #fffdfa 100%);
+}
+
+.biographyHero {
+  min-height: auto;
+  padding: 4.5rem 7vw 3.5rem;
+  background:
+    radial-gradient(circle at 14% 18%, rgba(201, 164, 76, 0.16), transparent 26%),
+    radial-gradient(circle at 82% 22%, rgba(8, 8, 8, 0.08), transparent 24%),
+    linear-gradient(135deg, rgba(255, 255, 255, 0.98), rgba(248, 247, 243, 0.96));
+}
+
+.biographyHeroGlow {
+  position: absolute;
+  border-radius: 999px;
+  filter: blur(12px);
+  pointer-events: none;
+}
+
+.biographyHeroGlowOne {
+  top: 4rem;
+  left: 7vw;
+  width: 8rem;
+  height: 8rem;
+  background: rgba(201, 164, 76, 0.18);
+}
+
+.biographyHeroGlowTwo {
+  right: 8vw;
+  bottom: 2rem;
+  width: 10rem;
+  height: 10rem;
+  background: rgba(155, 118, 35, 0.08);
+}
+
+.biographyHeroGrid {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-template-columns: minmax(0, 1.1fr) minmax(300px, 0.9fr);
+  gap: 3rem;
+  align-items: center;
+}
+
+.biographyHeroCopy {
+  display: grid;
+  gap: 1rem;
+  max-width: 42rem;
+}
+
+.biographyHeroKicker {
+  margin: 0;
+  color: var(--memorial-deep-gold);
+  letter-spacing: 0.22em;
+}
+
+.biographyHeroCopy h1 {
+  display: grid;
+  gap: 0.5rem;
+  margin: 0;
+  line-height: 0.95;
+}
+
+.biographyHeroCopy h1 span {
+  font-size: clamp(2.4rem, 5vw, 4.5rem);
+}
+
+.biographyHeroCopy h1 strong {
+  font-size: clamp(3rem, 6vw, 5.8rem);
+  color: var(--memorial-black);
+}
+
+.biographyHeroSubtitle {
+  max-width: 35rem;
+  margin: 0;
+  font-size: 1.18rem;
+  color: rgba(23, 23, 23, 0.74);
+}
+
+.biographyHeroDates {
+  margin: 0;
+  color: var(--memorial-deep-gold);
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  font-size: 0.86rem;
+}
+
+.biographyHeroFigure,
+.biographyStoryFigure {
+  margin: 0;
+  display: grid;
+  gap: 0.9rem;
+}
+
+.biographyImageFrame {
+  position: relative;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  border-radius: 1.8rem;
+  padding: 1rem;
+  background:
+    linear-gradient(145deg, rgba(255, 255, 255, 0.98), rgba(247, 241, 226, 0.92)),
+    radial-gradient(circle at top right, rgba(201, 164, 76, 0.12), transparent 26%);
+  border: 1px solid rgba(201, 164, 76, 0.28);
+  box-shadow: 0 28px 56px rgba(8, 8, 8, 0.12);
+}
+
+.biographyImageFrame--portrait {
+  min-height: 26rem;
+  aspect-ratio: 4 / 5;
+}
+
+.biographyImageFrame--landscape {
+  min-height: 22rem;
+  aspect-ratio: 16 / 10;
+}
+
+.biographyImageFrame--square {
+  min-height: 22rem;
+  aspect-ratio: 1 / 1;
+}
+
+.biographyImageFrame--auto {
+  aspect-ratio: auto;
+}
+
+.biographyHeroFigure .biographyImageFrame {
+  min-height: 35rem;
+}
+
+.biographyImageFrame--cover {
+  padding: 0;
+}
+
+.biographyImage {
+  display: block;
+  max-width: 100%;
+  border-radius: 1.2rem;
+}
+
+.biographyImage--contain {
+  width: 100%;
+  height: auto;
+  object-fit: contain;
+}
+
+.biographyImage--cover {
+  object-fit: cover;
+}
+
+.biographyHeroFigure figcaption,
+.biographyStoryFigure figcaption {
+  color: rgba(23, 23, 23, 0.6);
+  font-size: 0.92rem;
+  padding-top: 0.15rem;
+  border-top: 1px solid rgba(201, 164, 76, 0.18);
+}
+
+.biographyOpeningCard {
+  display: grid;
+  gap: 1.4rem;
+  padding: 2rem;
+  border-radius: 1.8rem;
+  background: rgba(255, 255, 255, 0.76);
+  border: 1px solid rgba(201, 164, 76, 0.2);
+  box-shadow: var(--shadow);
+}
+
+.biographyOpeningText {
+  max-width: 62rem;
+}
+
+.biographyStorySection {
+  display: grid;
+  gap: 2rem;
+  align-items: start;
+}
+
+.biographyStorySectionImageLeft {
+  grid-template-columns: minmax(260px, 0.92fr) minmax(0, 1.08fr);
+}
+
+.biographyStorySectionImageRight {
+  grid-template-columns: minmax(0, 1.08fr) minmax(260px, 0.92fr);
+}
+
+.biographyStorySectionImageRight .biographyStoryMedia {
+  order: 2;
+}
+
+.biographyStorySectionImageRight .biographyStoryCopy {
+  order: 1;
+}
+
+.biographyStorySectionImageLeft .biographyStoryMedia {
+  order: 1;
+}
+
+.biographyStorySectionImageLeft .biographyStoryCopy {
+  order: 2;
+}
+
+.biographyStoryMedia,
+.biographyStoryCopy {
+  min-width: 0;
+}
+
+.biographyStoryCopy {
+  display: grid;
+  gap: 1.4rem;
+  padding: 1.6rem 0;
+}
+
+.biographyParagraphs {
+  display: grid;
+  gap: 1rem;
+}
+
+.biographyParagraphs p,
+.biographyOpeningText p,
+.biographyLinksIntro {
+  margin: 0;
+}
+
+.biographyHeading {
+  display: grid;
+  gap: 0.65rem;
+}
+
+.biographyHeadingCenter {
+  justify-items: center;
+  text-align: center;
+}
+
+.biographyHeadingLeft {
+  justify-items: start;
+  text-align: left;
+}
+
+.biographyChapterMarker {
+  color: var(--memorial-deep-gold);
+  font-size: 0.78rem;
+  font-weight: 800;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  opacity: 0;
+  transform: translateY(12px);
+}
+
+.biographyHeadingLine {
+  display: block;
+  width: min(6.2rem, 22vw);
+  height: 1px;
+  background: linear-gradient(90deg, var(--memorial-gold), rgba(201, 164, 76, 0));
+  transform: scaleX(0);
+  transform-origin: left center;
+}
+
+.biographyHeading h2 {
+  margin: 0;
+  font-size: clamp(1.8rem, 3vw, 2.8rem);
+  line-height: 1.04;
+  opacity: 0;
+  transform: translateY(16px);
+}
+
+.biographyHeadingShimmer {
+  background: linear-gradient(120deg, var(--memorial-black) 0%, var(--memorial-black) 42%, var(--memorial-light-gold) 50%, var(--memorial-black) 58%, var(--memorial-black) 100%);
+  background-size: 220% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+}
+
+.reveal.seen .biographyChapterMarker {
+  animation: biography-fade-up 700ms ease forwards;
+}
+
+.reveal.seen .biographyHeadingLine {
+  animation: biography-line-draw 900ms ease 120ms forwards;
+}
+
+.reveal.seen .biographyHeading h2 {
+  animation: biography-fade-up 760ms cubic-bezier(0.2, 0.8, 0.2, 1) 170ms forwards;
+}
+
+.reveal.seen .biographyHeadingShimmer {
+  animation: biography-shimmer 1600ms ease 620ms 1 both;
+}
+
+.biographyStoryMedia,
+.biographyStoryCopy,
+.biographyPlaceholder {
+  opacity: 0;
+  transform: translateY(18px);
+}
+
+.reveal.seen .biographyStoryMedia {
+  animation: biography-fade-up 760ms ease forwards;
+}
+
+.reveal.seen .biographyStoryCopy {
+  animation: biography-fade-up 760ms ease 120ms forwards;
+}
+
+.reveal.seen .biographyPlaceholder {
+  animation: biography-fade-up 760ms ease forwards;
+}
+
+.biographyPlaceholder {
+  display: grid;
+  gap: 0.9rem;
+  align-content: center;
+  min-height: 29rem;
+  padding: 2rem;
+  border-radius: 1.8rem;
+  border: 1px dashed rgba(201, 164, 76, 0.42);
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.94), rgba(248, 247, 243, 0.94)),
+    radial-gradient(circle at top right, rgba(201, 164, 76, 0.16), transparent 26%);
+  box-shadow: var(--shadow);
+}
+
+.biographyPlaceholderChapter {
+  color: var(--memorial-deep-gold);
+  font-size: 0.82rem;
+  font-weight: 800;
+  letter-spacing: 0.24em;
+}
+
+.biographyPlaceholder strong {
+  font-family: var(--font-sans-heading);
+  font-size: 1.4rem;
+}
+
+.biographyPlaceholder p {
+  margin: 0;
+  color: rgba(23, 23, 23, 0.7);
+}
+
+.biographyLinksSection {
+  display: grid;
+  gap: 1.4rem;
+}
+
+.biographyLinksIntro {
+  max-width: 42rem;
+  justify-self: center;
+  text-align: center;
+  color: rgba(23, 23, 23, 0.7);
+}
+
+.biographyLinkGrid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+}
+
+.biographyLinkCard {
+  display: grid;
+  gap: 0.65rem;
+  padding: 1.6rem;
+  border-radius: 1.5rem;
+  text-decoration: none;
+  background: rgba(255, 255, 255, 0.84);
+  border: 1px solid rgba(201, 164, 76, 0.22);
+  box-shadow: var(--shadow);
+  transition:
+    transform 180ms ease,
+    border-color 180ms ease;
+}
+
+.biographyLinkCard span {
+  color: var(--memorial-deep-gold);
+  font-size: 0.78rem;
+  font-weight: 800;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+}
+
+.biographyLinkCard strong {
+  font-family: var(--font-sans-heading);
+  font-size: 1.28rem;
+}
+
+.biographyLinkCard p {
+  margin: 0;
+  color: rgba(23, 23, 23, 0.68);
+}
+
+.biographyLinkCard:hover {
+  transform: translateY(-4px);
+  border-color: rgba(201, 164, 76, 0.46);
+}
+
+@keyframes biography-fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes biography-line-draw {
+  from {
+    transform: scaleX(0);
+  }
+
+  to {
+    transform: scaleX(1);
+  }
+}
+
+@keyframes biography-shimmer {
+  from {
+    background-position: 200% 0;
+  }
+
+  to {
+    background-position: -20% 0;
+  }
+}
+
+@media (max-width: 900px) {
+  .biographyHeroGrid,
+  .biographyStorySectionImageLeft,
+  .biographyStorySectionImageRight,
+  .biographyLinkGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .biographyStorySectionImageLeft .biographyStoryCopy,
+  .biographyStorySectionImageRight .biographyStoryCopy,
+  .biographyStorySectionImageLeft .biographyStoryMedia,
+  .biographyStorySectionImageRight .biographyStoryMedia {
+    order: initial;
+  }
+
+  .biographyHeroFigure .biographyImageFrame {
+    min-height: 28rem;
+  }
+
+  .biographyImageFrame--portrait,
+  .biographyImageFrame--landscape,
+  .biographyImageFrame--square,
+  .biographyPlaceholder {
+    min-height: 24rem;
+  }
+
+  .biographyStoryCopy {
+    padding: 0;
+  }
+}
+
+@media (max-width: 640px) {
+  .biographyHero {
+    padding: 3.4rem 5vw 2.6rem;
+  }
+
+  .biographyHeroDates {
+    letter-spacing: 0.12em;
+  }
+
+  .biographyOpeningCard {
+    padding: 1.4rem;
+  }
+
+  .biographyHeroFigure .biographyImageFrame,
+  .biographyImageFrame--portrait,
+  .biographyImageFrame--landscape,
+  .biographyImageFrame--square,
+  .biographyPlaceholder {
+    min-height: 20rem;
+  }
+
+  .biographyImageFrame {
+    padding: 0.75rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .biographyImageFrame--portrait,
+  .biographyImageFrame--landscape,
+  .biographyImageFrame--square {
+    min-height: 0;
+    aspect-ratio: auto;
+  }
+
+  .biographyImageFrame--cover {
+    min-height: 24rem;
+    aspect-ratio: 4 / 5;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .biographyChapterMarker,
+  .biographyHeadingLine,
+  .biographyHeading h2,
+  .biographyStoryMedia,
+  .biographyStoryCopy,
+  .biographyPlaceholder {
+    opacity: 1;
+    transform: none;
+    animation: none !important;
+  }
+
+  .biographyHeadingLine {
+    transform: scaleX(1);
+  }
+
+  .biographyHeadingShimmer {
+    animation: none !important;
+  }
+
+  .biographyLinkCard {
+    transition: none;
   }
 }

@@ -1,8 +1,11 @@
 import Stripe from "stripe";
 import { NextResponse } from "next/server";
+import { DONATION_CURRENCY, toStripeAmount, validateDonationAmount } from "@/lib/payments/currency";
+import { DONATION_METHODS, buildDonationMethodFields } from "@/lib/payments/donation-methods";
 import { createServiceRoleSupabaseClient } from "@/lib/supabase";
 import { validateStripeDonation } from "@/lib/validation";
-import { getAppUrl, isSupabaseConfigured } from "@/lib/env";
+import { isSupabaseConfigured } from "@/lib/env";
+import { absoluteUrl } from "@/lib/seo";
 
 export async function POST(request: Request) {
   if (!process.env.STRIPE_SECRET_KEY) {
@@ -17,7 +20,7 @@ export async function POST(request: Request) {
   }
 
   const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
-  const origin = getAppUrl() || new URL(request.url).origin;
+  const amount = validateDonationAmount(result.data.amount, DONATION_CURRENCY);
   const reference = `memorial-${Date.now()}`;
   let donationId: string | null = null;
 
@@ -26,12 +29,12 @@ export async function POST(request: Request) {
     const { data, error } = await service
       .from("donations")
       .insert({
+        ...buildDonationMethodFields(DONATION_METHODS.CARD),
         donor_name: result.data.name,
         donor_email: result.data.email || null,
         donor_phone: result.data.phone || null,
-        donation_method: "card",
-        currency: process.env.STRIPE_DONATION_CURRENCY || "usd",
-        amount: result.data.amount,
+        currency: DONATION_CURRENCY,
+        amount,
         transaction_reference: reference,
         acknowledgement_preference: result.data.acknowledgement,
         anonymous_public_display: result.data.anonymous,
@@ -52,17 +55,16 @@ export async function POST(request: Request) {
     mode: "payment",
     client_reference_id: reference,
     metadata: {
-      donationReference: reference,
-      donationId: donationId || "",
-      acknowledgement: result.data.acknowledgement,
-      anonymous: String(result.data.anonymous),
+      donation_id: donationId || "",
+      donor_name: result.data.name,
+      donation_reference: reference,
     },
     line_items: [
       {
         quantity: 1,
         price_data: {
-          currency: process.env.STRIPE_DONATION_CURRENCY || "usd",
-          unit_amount: Math.round(result.data.amount * 100),
+          currency: DONATION_CURRENCY.toLowerCase(),
+          unit_amount: toStripeAmount(amount, DONATION_CURRENCY),
           product_data: {
             name: "Memorial family support",
             description: `Donation from ${result.data.name}`,
@@ -70,8 +72,8 @@ export async function POST(request: Request) {
         },
       },
     ],
-    success_url: `${origin}/donations/success?reference=${reference}`,
-    cancel_url: `${origin}/donations/cancelled?reference=${reference}`,
+    success_url: `${absoluteUrl("/donations/success")}?session_id={CHECKOUT_SESSION_ID}`,
+    cancel_url: `${absoluteUrl("/donations")}?payment=cancelled`,
   });
 
   if (isSupabaseConfigured() && donationId) {

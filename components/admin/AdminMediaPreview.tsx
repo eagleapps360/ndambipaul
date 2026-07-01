@@ -31,7 +31,7 @@ export default function AdminMediaPreview({
 
   return (
     <div className="adminMediaPreview adminMediaPreview-image">
-      <Image src={url} alt={alt} fill sizes="240px" />
+      <Image src={url} alt={alt} fill sizes="240px" unoptimized={!url.startsWith("/")} />
     </div>
   );
 }

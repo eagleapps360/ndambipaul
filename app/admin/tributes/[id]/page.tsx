@@ -1,12 +1,13 @@
 import AdminFormSection from "@/components/admin/AdminFormSection";
 import AdminConfirmDialog from "@/components/admin/AdminConfirmDialog";
-import AdminPageHeader from "@/components/admin/AdminPageHeader";
 import AdminMediaPreview from "@/components/admin/AdminMediaPreview";
+import AdminPageHeader from "@/components/admin/AdminPageHeader";
 import AdminSaveBar from "@/components/admin/AdminSaveBar";
 import { moderateTributeAction, reviewTributeRevisionAction, updateTributeDetailsAction } from "@/app/admin/actions";
 import { AdminBackLink, QueryNotice, formatDateTime } from "@/app/admin/shared";
 import { getAdminMediaPreviewMap, getTributeAdminDetail } from "@/lib/admin-data";
 import { requireAdminProfile } from "@/lib/auth";
+import { resolveStorageObjectUrl, storageObjectExists } from "@/lib/media/resolve-public-media";
 import { notFound } from "next/navigation";
 
 export default async function AdminTributeDetailPage({
@@ -22,6 +23,38 @@ export default async function AdminTributeDetailPage({
   if (!detail) notFound();
   const previewMap = await getAdminMediaPreviewMap(detail.media as any);
   const tribute = detail.tribute as any;
+  const currentProfilePreview =
+    tribute.profile_image_bucket && tribute.profile_image_path
+      ? await resolveStorageObjectUrl(tribute.profile_image_path, tribute.profile_image_bucket)
+      : null;
+  const currentProfileExists =
+    tribute.profile_image_bucket && tribute.profile_image_path
+      ? await storageObjectExists(tribute.profile_image_bucket, tribute.profile_image_path)
+      : false;
+  const revisionProfilePreviews = new Map<string, Awaited<ReturnType<typeof resolveStorageObjectUrl>>>(
+    await Promise.all(
+      (detail.revisions || []).map(async (revision: any) =>
+        [
+          revision.id,
+          revision.proposed_profile_image_bucket && revision.proposed_profile_image_path
+            ? await resolveStorageObjectUrl(revision.proposed_profile_image_path, revision.proposed_profile_image_bucket)
+            : null,
+        ] as const,
+      ),
+    ),
+  );
+  const revisionProfileExists = new Map<string, boolean>(
+    await Promise.all(
+      (detail.revisions || []).map(async (revision: any) =>
+        [
+          revision.id,
+          revision.proposed_profile_image_bucket && revision.proposed_profile_image_path
+            ? await storageObjectExists(revision.proposed_profile_image_bucket, revision.proposed_profile_image_path)
+            : false,
+        ] as const,
+      ),
+    ),
+  );
 
   return (
     <section className="adminPage">
@@ -153,6 +186,22 @@ export default async function AdminTributeDetailPage({
                     <strong>{revision.proposed_name || tribute.contributor_name || tribute.name}</strong> · {revision.status} ·{" "}
                     {formatDateTime(revision.created_at)}
                   </p>
+                  {revisionProfilePreviews.get(revision.id)?.url ? (
+                    <div className="adminMediaCard">
+                      <AdminMediaPreview
+                        kind="image"
+                        url={revisionProfilePreviews.get(revision.id)?.url || null}
+                        alt={`${revision.proposed_name || tribute.contributor_name || tribute.name} pending profile preview`}
+                      />
+                      <div>
+                        <strong>Pending replacement profile image</strong>
+                        <p>Focal position: {revision.proposed_profile_image_position || "50% 50%"}</p>
+                        {revision.proposed_profile_image_path && !revisionProfileExists.get(revision.id) ? (
+                          <p className="errorBox">Profile image file is missing from Storage.</p>
+                        ) : null}
+                      </div>
+                    </div>
+                  ) : null}
                   <p>{revision.proposed_message || "No message supplied."}</p>
                   {revision.status === "pending" ? (
                     <div className="adminActionRow">
@@ -179,6 +228,28 @@ export default async function AdminTributeDetailPage({
             </div>
           </article>
         ) : null}
+
+        <article className="adminPanel">
+          <div className="adminPanelHeader">
+            <h2>Current profile image</h2>
+          </div>
+          {tribute.profile_image_path ? (
+            <div className="adminMediaCard">
+              <AdminMediaPreview
+                kind="image"
+                url={currentProfilePreview?.url || null}
+                alt={`${tribute.contributor_name || tribute.name} profile preview`}
+              />
+              <div>
+                <strong>{currentProfileExists ? "Approved profile image" : "Profile image unavailable"}</strong>
+                <p>Focal position: {tribute.profile_image_position || "50% 50%"}</p>
+                {currentProfileExists ? null : <p className="errorBox">Profile image file is missing from Storage.</p>}
+              </div>
+            </div>
+          ) : (
+            <p className="subtle">No profile image path is stored for this tribute.</p>
+          )}
+        </article>
 
         <article className="adminPanel">
           <div className="adminPanelHeader">

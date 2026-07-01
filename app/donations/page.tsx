@@ -15,7 +15,7 @@ export default function DonationsPage() {
       <section className="pageHero">
         <p className="kicker">Donations</p>
         <h1>Support the family with accountability</h1>
-        <p>Donation preferences include public acknowledgement, anonymous listing or private thanks only.</p>
+        <p>Donation preferences include public acknowledgement, anonymous listing or private thanks only. Mobile Money declarations remain pending until manually verified.</p>
       </section>
       <section className="section splitLayout">
         <div>

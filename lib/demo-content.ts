@@ -8,9 +8,7 @@ export const demoNavigation: Array<{ href: Route; label: string }> = [
   { href: "/gallery", label: "Gallery" },
   { href: "/programme", label: "Programme" },
   { href: "/livestreams", label: "Watch Live" },
-  { href: "/teams", label: "Join a Team" },
   { href: "/donations", label: "Donations" },
-  { href: "/coordinators", label: "Coordinators" },
 ];
 
 export const demoSiteSettings = {
@@ -74,7 +72,7 @@ export const demoSiteSettings = {
   livestreamFallbackMessage: "Livestream access details will appear here once the family confirms the broadcast links.",
   socialLinks: {
     whatsapp:
-      "https://wa.me/?text=Join%20us%20in%20celebrating%20the%20life%20and%20legacy%20of%20Pa%20Ndambi%20Paul%20Angemba",
+      "https://wa.me/237675079266?text=Join%20us%20in%20celebrating%20the%20life%20and%20legacy%20of%20Pa%20Ndambi%20Paul%20Angemba%0Ahttps%3A%2F%2Fndambi.org%2F",
   },
   openGraphImage: "/images/pa-ndambi/hero-pa-ndambi-blue-regalia.jpg",
   familyContacts: {
@@ -83,10 +81,11 @@ export const demoSiteSettings = {
     primaryPhone: "+000 000 000",
   },
   mobileMoney: {
-    mtnEnabled: false,
+    mtnEnabled: true,
     orangeEnabled: false,
-    mtnDisplayNumber: "",
-    orangeDisplayNumber: "",
+    mtnDisplayName: "Aphanyieck Akwi",
+    mtnDisplayNumber: "675 119 804",
+    mtnRawNumber: "675119804",
   },
 };
 
@@ -656,7 +655,7 @@ export const demoDonationOptions = [
   {
     method: "mobile-money",
     title: "Mobile Money",
-    description: "Configurable MTN Mobile Money and Orange Money account details for public display.",
+    description: "MTN Mobile Money contributions are recorded for manual verification by the family finance team.",
   },
   {
     method: "card",

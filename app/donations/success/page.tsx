@@ -13,7 +13,7 @@ export default function DonationSuccessPage() {
       <section className="pageHero narrowHero">
         <p className="kicker">Donation Received</p>
         <h1>Thank you for your support</h1>
-        <p>Your payment was completed with the provider. The finance team will reconcile the trusted record and acknowledgement preference.</p>
+        <p>Your payment return has been received. Stripe webhook confirmation, not this browser page alone, is used as the final source of truth for completed card donations.</p>
       </section>
     </main>
   );

@@ -14,12 +14,15 @@ export default async function GalleryPage() {
   const items = await getApprovedGalleryItems();
   const albumMap = new Map<string, { title: string; category: string; count: number }>();
   items.forEach((item) => {
-    const existing = albumMap.get(item.albumSlug);
+    const galleryItem = item as { albumSlug?: string; albumTitle: string; category?: string };
+    const albumSlug = galleryItem.albumSlug || galleryItem.albumTitle.toLowerCase().replace(/[^a-z0-9]+/g, "-");
+    const category = galleryItem.category || galleryItem.albumTitle;
+    const existing = albumMap.get(albumSlug);
     if (existing) {
       existing.count += 1;
       return;
     }
-    albumMap.set(item.albumSlug, { title: item.albumTitle, category: item.category, count: 1 });
+    albumMap.set(albumSlug, { title: galleryItem.albumTitle, category, count: 1 });
   });
 
   return (
@@ -27,7 +30,7 @@ export default async function GalleryPage() {
       <section className="pageHero">
         <p className="kicker">Gallery</p>
         <h1>Moments preserved with care</h1>
-        <p>Approved images and videos are grouped into albums and presented with captions, dates and contributor credit.</p>
+        <p>Approved photographs and video memories are grouped into albums and presented with captions, dates and contributor credit.</p>
       </section>
 
       <section className="section">

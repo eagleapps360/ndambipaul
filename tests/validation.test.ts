@@ -1,5 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
+import { toStripeAmount } from "../lib/payments/currency";
 import { sanitizeText, validateDonationPledge, validateStripeDonation, validateTeamForm } from "../lib/validation";
 
 test("sanitizeText removes angle brackets and trims whitespace", () => {
@@ -15,7 +16,7 @@ test("validateStripeDonation rejects invalid payloads", () => {
 });
 
 test("validateStripeDonation accepts valid donation payload", () => {
-  const result = validateStripeDonation({ amount: 45, name: "Mary", acknowledgement: "public" });
+  const result = validateStripeDonation({ amount: 5000, name: "Mary", acknowledgement: "public" });
   assert.equal(result.ok, true);
 });
 
@@ -23,7 +24,7 @@ test("validateDonationPledge keeps mobile money submissions unverified at valida
   const result = validateDonationPledge({
     donorName: "Mary",
     method: "mobile-money",
-    amount: 200,
+    amount: 5000,
     transactionReference: "MM-123",
     acknowledgement: "public",
   });
@@ -31,6 +32,10 @@ test("validateDonationPledge keeps mobile money submissions unverified at valida
   if (result.ok) {
     assert.equal(result.data.method, "mobile-money");
   }
+});
+
+test("xaf stripe amounts remain zero-decimal", () => {
+  assert.equal(toStripeAmount(5000, "XAF"), 5000);
 });
 
 test("validateTeamForm rejects submissions without consent", () => {

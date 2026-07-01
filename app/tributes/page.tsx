@@ -14,14 +14,12 @@ export const metadata = buildPageMetadata({
 export default async function TributesPage({
   searchParams,
 }: {
-  searchParams: Promise<{ category?: string; relationship?: string }>;
+  searchParams: Promise<{ category?: string }>;
 }) {
   const tributes = await getApprovedTributes();
-  const categories = [...new Set(tributes.map((tribute) => tribute.category))];
-  const relationships = [...new Set(tributes.map((tribute) => tribute.relationship))];
+  const categories = [...new Set(tributes.map((tribute) => tribute.category).filter(Boolean))];
   const params = await searchParams;
   const selectedCategory = params.category || "All";
-  const selectedRelationship = params.relationship || "All";
 
   return (
     <main className="pageMain">
@@ -36,13 +34,11 @@ export default async function TributesPage({
       </section>
       <section className="section splitLayout">
         <div>
-          <SectionTitle eyebrow="Approved Tributes" title="Filter by category or relationship" />
+          <SectionTitle eyebrow="Approved Tributes" title="Filter by category" />
           <TributeFilters
             tributes={tributes}
             categories={categories}
-            relationships={relationships}
             selectedCategory={selectedCategory}
-            selectedRelationship={selectedRelationship}
           />
         </div>
         <div>

@@ -1,4 +1,6 @@
 import { z } from "zod";
+import { DONATION_CURRENCY, MAX_DONATION_AMOUNT, MIN_DONATION_AMOUNT } from "@/lib/payments/currency";
+import { DONATION_METHOD_VALUES } from "@/lib/payments/donation-methods";
 import { inspectFiles } from "@/lib/uploads";
 import { buildObjectPosition, normalizeEmail, sanitizeObjectPosition } from "@/lib/tribute-helpers";
 
@@ -161,26 +163,30 @@ const mediaSchema = z.object({
 
 const stripeDonationSchema = z.object({
   name: z.string().min(2, "Please provide the donor name."),
-  amount: z.coerce.number().finite().min(1, "Enter a valid donation amount."),
+  amount: z
+    .coerce
+    .number()
+    .finite()
+    .int(`Enter the ${DONATION_CURRENCY} amount as a whole number.`)
+    .min(MIN_DONATION_AMOUNT, `Enter at least ${MIN_DONATION_AMOUNT} ${DONATION_CURRENCY}.`)
+    .max(MAX_DONATION_AMOUNT, `Enter an amount below ${MAX_DONATION_AMOUNT} ${DONATION_CURRENCY}.`),
   acknowledgement: z.string().min(1, "Choose an acknowledgement preference."),
   email: z.string().email("Enter a valid donor email address.").or(z.literal("")),
   phone: z.string().optional(),
   anonymous: z.boolean().optional().default(false),
+  note: z.string().optional(),
 });
 
 const donationPledgeSchema = z
   .object({
     donorName: z.string().min(2, "Please provide the donor name."),
-    method: z.enum(["mobile-money", "cash", "kind", "bank-transfer"], {
-      message: "Choose a supported donation method.",
-    }),
-    amount: z.union([z.coerce.number().finite().min(0, "Enter a valid amount."), z.null()]),
+    method: z.enum(DONATION_METHOD_VALUES, { message: "Choose a supported donation method." }),
+    amount: z.union([z.coerce.number().finite().int("Enter the amount as a whole number.").min(0, "Enter a valid amount."), z.null()]),
     email: z.string().email("Enter a valid email address.").or(z.literal("")),
     phone: z.string().optional(),
     transactionReference: z.string().optional(),
     acknowledgement: z.string().min(1, "Choose an acknowledgement preference."),
     anonymous: z.boolean().optional().default(false),
-    provider: z.string().optional(),
     itemDescription: z.string().optional(),
     quantity: z.string().optional(),
     estimatedValue: z.union([z.coerce.number().finite(), z.null()]).optional().default(null),
@@ -194,6 +200,34 @@ const donationPledgeSchema = z
         path: ["transactionReference"],
         message: "Enter the mobile money transaction reference.",
       });
+    }
+    if (value.method === "mobile-money" && value.amount === null) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ["amount"],
+        message: `Enter the donation amount in ${DONATION_CURRENCY}.`,
+      });
+    }
+    if ((value.method === "mobile-money" || value.method === "cash" || value.method === "card") && value.amount !== null) {
+      if (!Number.isInteger(value.amount)) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          path: ["amount"],
+          message: `Enter the ${DONATION_CURRENCY} amount as a whole number.`,
+        });
+      } else if (value.amount < MIN_DONATION_AMOUNT) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          path: ["amount"],
+          message: `Enter at least ${MIN_DONATION_AMOUNT} ${DONATION_CURRENCY}.`,
+        });
+      } else if (value.amount > MAX_DONATION_AMOUNT) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          path: ["amount"],
+          message: `Enter an amount below ${MAX_DONATION_AMOUNT} ${DONATION_CURRENCY}.`,
+        });
+      }
     }
   });
 
@@ -369,6 +403,7 @@ export function validateStripeDonation(body: unknown) {
           email: typeof record.email === "string" ? record.email.trim() : "",
           phone: typeof record.phone === "string" ? record.phone.trim() : "",
           anonymous: Boolean(record.anonymous),
+          note: typeof record.note === "string" ? record.note.trim() : "",
         }
       : null;
 
@@ -396,7 +431,6 @@ export function validateDonationPledge(body: unknown) {
               : "",
           acknowledgement: typeof record.acknowledgement === "string" ? record.acknowledgement.trim() : "",
           anonymous: Boolean(record.anonymous),
-          provider: typeof record.provider === "string" ? record.provider.trim() : "",
           itemDescription: typeof record.itemDescription === "string" ? record.itemDescription.trim() : "",
           quantity: typeof record.quantity === "string" ? record.quantity.trim() : "",
           estimatedValue: record.estimatedValue === "" ? null : (record.estimatedValue ?? null),

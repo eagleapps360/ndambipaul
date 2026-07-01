@@ -22,7 +22,7 @@ test("mobile money donation submissions remain unverified", async () => {
     body: JSON.stringify({
       donorName: "Mary",
       method: "mobile-money",
-      amount: 250,
+      amount: 5000,
       transactionReference: "MM-222",
       acknowledgement: "public",
     }),

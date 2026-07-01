@@ -13,6 +13,8 @@ import {
   demoTributes,
   demoTeams,
 } from "@/lib/demo-content";
+import { getPublicGalleryManifest } from "@/lib/gallery-images";
+import { resolvePublicTributeProfileImage } from "@/lib/media/resolve-public-media";
 import { getGalleryFallbackImage, normalizeImageUrl } from "@/lib/public-image-fallbacks";
 import type { TributeImage, TributeProfileImage } from "@/lib/public-types";
 import { adminSections } from "@/lib/ui-config";
@@ -152,7 +154,11 @@ export const getPublicSiteSettings = cachedQuery(
             : demoSiteSettings.familyContacts,
         mobileMoney:
           typeof row.mobile_money_settings === "object" && row.mobile_money_settings
-            ? row.mobile_money_settings
+            ? {
+                ...demoSiteSettings.mobileMoney,
+                ...row.mobile_money_settings,
+                orangeEnabled: false,
+              }
             : demoSiteSettings.mobileMoney,
         shortTitle: demoSiteSettings.shortTitle,
       };
@@ -338,48 +344,48 @@ export async function getApprovedTributesUncached(): Promise<Tribute[]> {
     if (error) throw error;
     const rows = data || [];
     const mediaMap = await getApprovedTributeMediaMap(rows.map((row) => row.id));
-    return rows.map((row) => ({
-      id: row.id,
-      slug: row.slug,
-      status: "approved",
-      featured: row.featured,
-      category: row.relationship_category,
-      relationship: row.relationship,
-      name: row.contributor_name,
-      location: row.location || "",
-      message: row.tribute_message,
-      profileImageUrl: normalizeImageUrl(row.profile_media_url, defaultTributeImage),
-      profileImagePosition: row.profile_image_position || "50% 50%",
-      profileImage: row.profile_media_url
-        ? {
-            url: normalizeImageUrl(row.profile_media_url, defaultTributeImage),
-            objectPosition: row.profile_image_position || "50% 50%",
-          }
-        : null,
-      media: mediaMap.get(row.id) || [],
-      mediaCount: (mediaMap.get(row.id) || []).length,
-      submittedAt: row.created_at,
-      publishedAt: row.published_at,
-    }));
+    return Promise.all(
+      rows.map(async (row) => {
+        const profileImage = await resolvePublicTributeProfileImage(row.profile_media_url || null);
+        return {
+          id: row.id,
+          slug: row.slug,
+          status: "approved",
+          featured: row.featured,
+          category: row.relationship_category,
+          relationship: row.relationship,
+          name: row.contributor_name,
+          location: row.location || "",
+          message: row.tribute_message,
+          profileImageUrl: profileImage?.url || null,
+          profileImagePosition: row.profile_image_position || "50% 50%",
+          profileImage: profileImage
+            ? {
+                url: profileImage.url,
+                objectPosition: row.profile_image_position || "50% 50%",
+              }
+            : null,
+          media: mediaMap.get(row.id) || [],
+          mediaCount: (mediaMap.get(row.id) || []).length,
+          submittedAt: row.created_at,
+          publishedAt: row.published_at,
+        };
+      }),
+    );
   } catch (error) {
     logPublicLoaderError("Failed to load approved tributes", error);
     return demoTributes.filter((tribute) => tribute.status === "approved").map(mapDemoTribute);
   }
 }
 
-export const getApprovedTributes = cachedQuery(["public-tributes"], getApprovedTributesUncached, {
-  revalidate: 300,
-  tags: ["public-content", "tributes"],
-});
+export async function getApprovedTributes() {
+  return getApprovedTributesUncached();
+}
 
-export const getFeaturedTributes = cachedQuery(
-  ["public-featured-tributes"],
-  async (): Promise<Tribute[]> => {
-    const tributes = await getApprovedTributes();
-    return tributes.filter((tribute) => tribute.featured);
-  },
-  { revalidate: 300, tags: ["public-content", "tributes"] },
-);
+export async function getFeaturedTributes(): Promise<Tribute[]> {
+  const tributes = await getApprovedTributes();
+  return tributes.filter((tribute) => tribute.featured);
+}
 
 export async function getTributeBySlug(slug: string): Promise<Tribute | null> {
   if (!isSupabaseConfigured()) {
@@ -392,6 +398,7 @@ export async function getTributeBySlug(slug: string): Promise<Tribute | null> {
     if (error) throw error;
     if (!data) return null;
     const mediaMap = await getApprovedTributeMediaMap([data.id]);
+    const profileImage = await resolvePublicTributeProfileImage(data.profile_media_url || null);
     return {
       id: data.id,
       slug: data.slug,
@@ -402,11 +409,11 @@ export async function getTributeBySlug(slug: string): Promise<Tribute | null> {
       name: data.contributor_name,
       location: data.location || "",
       message: data.tribute_message,
-      profileImageUrl: normalizeImageUrl(data.profile_media_url, defaultTributeImage),
+      profileImageUrl: profileImage?.url || null,
       profileImagePosition: data.profile_image_position || "50% 50%",
-      profileImage: data.profile_media_url
+      profileImage: profileImage
         ? {
-            url: normalizeImageUrl(data.profile_media_url, defaultTributeImage),
+            url: profileImage.url,
             objectPosition: data.profile_image_position || "50% 50%",
           }
         : null,
@@ -466,7 +473,21 @@ export const getPublishedGallery = cachedQuery(["public-gallery"], getPublishedG
 });
 
 export async function getApprovedGalleryItems() {
-  return getPublishedGallery();
+  const items = await getPublishedGallery();
+  const manifestItems = getPublicGalleryManifest();
+  const seen = new Set(items.map((item) => normalizeImageUrl(item.publicUrl || item.posterUrl, item.posterUrl)));
+  const merged = [...items];
+
+  for (const item of manifestItems) {
+    const key = normalizeImageUrl(item.publicUrl || item.posterUrl, item.posterUrl);
+    if (seen.has(key)) {
+      continue;
+    }
+    seen.add(key);
+    merged.push(item as MediaItem);
+  }
+
+  return merged;
 }
 
 export function buildCalendarLink(event: ProgrammeEvent) {
@@ -528,11 +549,13 @@ export async function getProgramme(slug: string) {
 export function deriveLivestreamState(stream: Livestream, now = Date.now()) {
   if (stream.status === "cancelled") return "cancelled";
   const starts = new Date(stream.actualStartAt || stream.startsAt).getTime();
-  const ends = stream.endsAt ? new Date(stream.endsAt).getTime() : null;
+  const rawEnds = stream.endsAt ? new Date(stream.endsAt).getTime() : null;
+  const fallbackEnds = starts + (stream.slug.includes("wake") ? 4 : 5) * 60 * 60 * 1000;
+  const ends = rawEnds && rawEnds > starts ? rawEnds : fallbackEnds;
   if (stream.recordingUrl && ends && now > ends) return "ended";
   if (stream.status === "live") return "live";
+  if (stream.status === "ended") return "ended";
   if (ends && now > ends) return "ended";
-  if (now >= starts && (!ends || now <= ends)) return "live";
   return "scheduled";
 }
 

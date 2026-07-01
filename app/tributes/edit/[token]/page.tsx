@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import TributeEditForm from "@/components/TributeEditForm";
+import { resolveStorageObjectUrl } from "@/lib/media/resolve-public-media";
 import { getTributeEditTokenRecord } from "@/lib/tribute-edit";
 import { createServiceRoleSupabaseClient } from "@/lib/supabase";
 import { isSupabaseConfigured } from "@/lib/env";
@@ -38,7 +39,7 @@ export default async function TributeEditPage({ params }: { params: Promise<{ to
 
   const profileImageUrl =
     tribute.profile_image_bucket && tribute.profile_image_path
-      ? (await service.storage.from(tribute.profile_image_bucket).createSignedUrl(tribute.profile_image_path, 60 * 60)).data?.signedUrl || null
+      ? (await resolveStorageObjectUrl(tribute.profile_image_path, tribute.profile_image_bucket))?.url || null
       : null;
 
   return (

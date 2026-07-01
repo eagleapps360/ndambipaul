@@ -1,5 +1,6 @@
 import EventCountdown from "@/components/EventCountdown";
 import SectionTitle from "@/components/SectionTitle";
+import { getPublishedLivestreams } from "@/lib/content";
 import { funeralEvents } from "@/lib/events";
 import { buildPageMetadata } from "@/lib/seo";
 
@@ -10,6 +11,7 @@ export const metadata = buildPageMetadata({
 });
 
 export default async function LivestreamsPage() {
+  const livestreams = await getPublishedLivestreams();
   return (
     <main className="pageMain">
       <section className="pageHero">
@@ -20,10 +22,17 @@ export default async function LivestreamsPage() {
 
       <section className="section livestreamStack">
         {funeralEvents.map((event) => {
+          const stream =
+            livestreams.find((item) => item.eventSlug === event.slug) ||
+            livestreams.find((item) => item.slug.includes(event.variant));
+          const watchUrl = stream?.externalUrl || stream?.embedUrl || null;
+          const replayUrl = stream?.recordingUrl || null;
+          const statusLabel = stream?.status === "live" ? "LIVE NOW" : stream?.status === "ended" ? "REPLAY" : event.streamStatusUpcoming;
+
           return (
-            <article key={event.id} className="streamCard memorialWatchCard">
+            <article key={event.id} id={event.slug} className="streamCard memorialWatchCard">
               <div>
-                <SectionTitle eyebrow={event.streamStatusUpcoming} title={event.title} copy="Livestream link will be available here" />
+                <SectionTitle eyebrow={statusLabel} title={event.title} copy="Livestream link will be available here" />
                 <time className="memorialStreamDateTime" dateTime={event.dateTime}>
                   {event.displayDateTime}
                 </time>
@@ -38,7 +47,21 @@ export default async function LivestreamsPage() {
                   <span />
                 </div>
                 <div className="cardActions">
-                  <span className="subtle">A viewing link will appear here when the livestream is ready.</span>
+                  {stream?.status === "live" && watchUrl ? (
+                    <a className="button" href={watchUrl} target="_blank" rel="noreferrer">
+                      Watch Live Now
+                    </a>
+                  ) : stream?.status === "ended" && replayUrl ? (
+                    <a className="button" href={replayUrl} target="_blank" rel="noreferrer">
+                      Watch Replay
+                    </a>
+                  ) : watchUrl ? (
+                    <a className="button ghost" href={watchUrl} target="_blank" rel="noreferrer">
+                      View Livestream Details
+                    </a>
+                  ) : (
+                    <span className="subtle">A viewing link will appear here when the livestream is ready.</span>
+                  )}
                 </div>
               </div>
             </article>

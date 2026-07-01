@@ -3,11 +3,11 @@ import Link from "next/link";
 import Reveal from "@/components/Reveal";
 import SiteLogo from "@/components/SiteLogo";
 import SectionTitle from "@/components/SectionTitle";
+import HomeHeroPortrait from "@/components/HomeHeroPortrait";
 import { DonationForm, TeamForm } from "@/components/Forms";
 import EventCountdown from "@/components/EventCountdown";
 import HomePhotoConstellation from "@/components/HomePhotoConstellation";
 import JsonLd from "@/components/JsonLd";
-import { getMemorialObjectPosition } from "@/lib/memorial-images";
 import TributeCard from "@/components/TributeCard";
 import {
   getApprovedGalleryItems,
@@ -17,7 +17,8 @@ import {
   getActiveTeams,
 } from "@/lib/content";
 import { funeralDateRangeDisplay, funeralEvents } from "@/lib/events";
-import { buildPageMetadata } from "@/lib/seo";
+import { getMemorialObjectPosition } from "@/lib/memorial-images";
+import { absoluteUrl, buildPageMetadata } from "@/lib/seo";
 import { buildBreadcrumbJsonLd, buildPersonJsonLd, buildProgrammeEventJsonLd, buildWebsiteJsonLd } from "@/lib/structured-data";
 
 export const metadata = buildPageMetadata({
@@ -37,6 +38,7 @@ export default async function HomePage() {
   ]);
   const portraitSrc = "/images/pa-ndambi/pa-ndambi-blue-cutout.png";
   const heroParticles = Array.from({ length: 10 }, (_, index) => index);
+  const whatsappShareUrl = `https://wa.me/237675079266?text=${encodeURIComponent(`${site.shareText}\n${absoluteUrl("/")}`)}`;
 
   return (
     <main>
@@ -86,25 +88,7 @@ export default async function HomePage() {
               <div className="scrollIndicatorArrow" />
             </div>
           </div>
-          <div className="heroPortrait memorialHeroPortrait">
-            <div className="memorialPortraitStage" aria-hidden="true">
-              <span className="memorialRing memorialRingOne" />
-              <span className="memorialRing memorialRingTwo" />
-              <span className="memorialRing memorialRingThree" />
-              <span className="memorialHalo" />
-              <span className="memorialPlatform" />
-            </div>
-            <div className="portraitFrame memorialPortraitFrame">
-              <Image
-                src={portraitSrc}
-                alt="Portrait of Pa Ndambi Paul Angemba in blue regalia"
-                fill
-                priority
-                sizes="(max-width: 720px) 88vw, (max-width: 1080px) 68vw, 40vw"
-                style={{ objectPosition: getMemorialObjectPosition(portraitSrc) }}
-              />
-            </div>
-          </div>
+          <HomeHeroPortrait src={portraitSrc} alt="Portrait of Pa Ndambi Paul Angemba in blue regalia" />
         </div>
       </section>
 
@@ -168,6 +152,35 @@ export default async function HomePage() {
           <div className="sectionActions">
             <Link className="button darkButton" href="/gallery">
               Open full gallery
+            </Link>
+          </div>
+        </section>
+      </Reveal>
+
+      <Reveal>
+        <section className="section programmePreviewSection">
+          <SectionTitle
+            eyebrow="Funeral Programme"
+            title="2-4 July 2026"
+            copy="A concise guide to the memorial weekend, with the full public service order available on the dedicated programme page."
+          />
+          <div className="programmePreviewList">
+            <article className="programmePreviewCard">
+              <span>Thursday, 2 July</span>
+              <h3>Wake Service</h3>
+            </article>
+            <article className="programmePreviewCard">
+              <span>Friday, 3 July</span>
+              <h3>Funeral and Burial</h3>
+            </article>
+            <article className="programmePreviewCard">
+              <span>4 July 2026</span>
+              <h3>Family Meeting and Departure</h3>
+            </article>
+          </div>
+          <div className="sectionActions">
+            <Link className="button darkButton" href="/programme">
+              View Full Programme
             </Link>
           </div>
         </section>
@@ -254,7 +267,7 @@ export default async function HomePage() {
           <strong>Share a memory with the family</strong>
           <span>Tributes and gallery uploads are reviewed before they become public.</span>
         </div>
-        <a className="button light" href={site.socialLinks.whatsapp} target="_blank" rel="noreferrer">
+        <a className="button light" href={whatsappShareUrl} target="_blank" rel="noopener noreferrer">
           Share via WhatsApp
         </a>
       </section>

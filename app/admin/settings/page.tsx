@@ -129,7 +129,7 @@ export default async function AdminSettingsPage({
             </label>
             <label>
               Family WhatsApp contact
-              <input name="family_whatsapp_contact" defaultValue={settings.family_whatsapp_contact || ""} />
+              <input name="family_whatsapp_contact" defaultValue={settings.family_whatsapp_contact || "675079266"} />
             </label>
             <label>
               Default timezone
@@ -147,19 +147,11 @@ export default async function AdminSettingsPage({
           <div className="formGrid">
             <label>
               MTN display name
-              <input name="mtn_display_name" defaultValue={settings.mobile_money_settings?.mtnDisplayName || ""} />
+              <input name="mtn_display_name" defaultValue={settings.mobile_money_settings?.mtnDisplayName || publicSite.mobileMoney.mtnDisplayName || "Aphanyieck Akwi"} />
             </label>
             <label>
               MTN display number
-              <input name="mtn_display_number" defaultValue={settings.mobile_money_settings?.mtnDisplayNumber || publicSite.mobileMoney.mtnDisplayNumber} />
-            </label>
-            <label>
-              Orange display name
-              <input name="orange_display_name" defaultValue={settings.mobile_money_settings?.orangeDisplayName || ""} />
-            </label>
-            <label>
-              Orange display number
-              <input name="orange_display_number" defaultValue={settings.mobile_money_settings?.orangeDisplayNumber || publicSite.mobileMoney.orangeDisplayNumber} />
+              <input name="mtn_display_number" defaultValue={settings.mobile_money_settings?.mtnDisplayNumber || publicSite.mobileMoney.mtnDisplayNumber || "675 119 804"} />
             </label>
           </div>
           <label>

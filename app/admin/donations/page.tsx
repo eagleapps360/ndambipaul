@@ -39,7 +39,6 @@ export default async function AdminDonationsPage({
               <option value="kind">In kind</option>
               <option value="mobile-money">Mobile money</option>
               <option value="card">Card</option>
-              <option value="bank-transfer">Bank transfer</option>
             </select>
           </label>
           <label>

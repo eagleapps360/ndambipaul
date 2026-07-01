@@ -88,8 +88,8 @@ export async function updateSiteSettingsAction(formData: FormData) {
       visible: formData.get("mobile_money_visible") === "on",
       mtnDisplayName: String(formData.get("mtn_display_name") || ""),
       mtnDisplayNumber: String(formData.get("mtn_display_number") || ""),
-      orangeDisplayName: String(formData.get("orange_display_name") || ""),
-      orangeDisplayNumber: String(formData.get("orange_display_number") || ""),
+      orangeDisplayName: "",
+      orangeDisplayNumber: "",
     },
     venue_information: {
       overview: String(formData.get("venue_overview") || ""),

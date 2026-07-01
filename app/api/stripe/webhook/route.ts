@@ -1,5 +1,6 @@
 import Stripe from "stripe";
 import { NextResponse } from "next/server";
+import { DONATION_CURRENCY, toStripeAmount } from "@/lib/payments/currency";
 import { createServiceRoleSupabaseClient } from "@/lib/supabase";
 import { isSupabaseConfigured } from "@/lib/env";
 
@@ -31,28 +32,71 @@ export async function POST(request: Request) {
       return NextResponse.json({ received: true, duplicate: true });
     }
 
-    if (event.type === "checkout.session.completed" || event.type === "checkout.session.async_payment_failed" || event.type === "checkout.session.expired") {
+    if (
+      event.type === "checkout.session.completed" ||
+      event.type === "checkout.session.async_payment_succeeded" ||
+      event.type === "checkout.session.async_payment_failed" ||
+      event.type === "checkout.session.expired"
+    ) {
       const session = event.data.object as Stripe.Checkout.Session;
+      const donationId = session.metadata?.donation_id || null;
+      const isSuccessEvent = event.type === "checkout.session.completed" || event.type === "checkout.session.async_payment_succeeded";
       await service.from("donation_payment_events").insert({
         stripe_event_id: event.id,
         stripe_event_type: event.type,
-        donation_id: session.metadata?.donationId || null,
-        payload_json: event,
+        donation_id: donationId,
+        payload_json: {
+          id: event.id,
+          type: event.type,
+          session_id: session.id,
+          payment_status: session.payment_status,
+          amount_total: session.amount_total,
+          currency: session.currency,
+        },
       });
-      await service
+      const { data: donation } = await service
         .from("donations")
-        .update({
-          provider_payment_status:
-            event.type === "checkout.session.completed"
-              ? "paid"
-              : event.type === "checkout.session.expired"
-                ? "expired"
-                : "failed",
-          internal_status: event.type === "checkout.session.completed" ? "completed" : "pending",
-          stripe_payment_intent_id: typeof session.payment_intent === "string" ? session.payment_intent : null,
-          updated_at: new Date().toISOString(),
-        })
-        .eq("stripe_checkout_session_id", session.id);
+        .select("id, amount, currency, internal_status")
+        .eq("stripe_checkout_session_id", session.id)
+        .maybeSingle();
+
+      if (
+        donation &&
+        isSuccessEvent &&
+        (String(donation.currency || "").toUpperCase() !== DONATION_CURRENCY ||
+          toStripeAmount(Number(donation.amount || 0), DONATION_CURRENCY) !== Number(session.amount_total || 0))
+      ) {
+        return NextResponse.json({ error: "Donation amount mismatch." }, { status: 400 });
+      }
+
+      if (donation?.internal_status === "completed" && !isSuccessEvent) {
+        return NextResponse.json({ received: true, ignored: "completed-donation" });
+      }
+
+      const update =
+        isSuccessEvent
+          ? {
+              provider_payment_status: "paid",
+              verification_state: "verified",
+              internal_status: "completed",
+              stripe_payment_intent_id: typeof session.payment_intent === "string" ? session.payment_intent : null,
+              updated_at: new Date().toISOString(),
+            }
+          : event.type === "checkout.session.expired"
+            ? {
+                provider_payment_status: "expired",
+                internal_status: "pending",
+                updated_at: new Date().toISOString(),
+              }
+            : {
+                provider_payment_status: "failed",
+                internal_status: "pending",
+                updated_at: new Date().toISOString(),
+              };
+
+      if (!donation || donation.internal_status !== "completed" || isSuccessEvent) {
+        await service.from("donations").update(update).eq("stripe_checkout_session_id", session.id);
+      }
       return NextResponse.json({ received: true, event: event.type });
     }
     return NextResponse.json({ received: true, ignored: event.type });

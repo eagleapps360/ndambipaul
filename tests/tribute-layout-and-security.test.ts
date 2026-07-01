@@ -2,6 +2,7 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
+import { normalizeStoragePath } from "../lib/media/resolve-public-media";
 import { buildObjectPosition, getInitials, sanitizeObjectPosition } from "../lib/tribute-helpers";
 import { getApprovedTributesUncached } from "../lib/content";
 import { createEditToken, hashToken } from "../lib/tribute-security";
@@ -42,4 +43,23 @@ test("public tribute loader omits private email fields while preserving profile 
 
 test("initials fallback remains available when no profile image exists", () => {
   assert.equal(getInitials("Marforh Angemba"), "MA");
+});
+
+test("profile storage paths normalise safely for signed-url resolution", () => {
+  assert.equal(
+    normalizeStoragePath("/tributes/demo/profile/file.webp", "memorial-private-submissions"),
+    "tributes/demo/profile/file.webp",
+  );
+  assert.equal(
+    normalizeStoragePath("memorial-private-submissions/tributes/demo/profile/file.webp", "memorial-private-submissions"),
+    "tributes/demo/profile/file.webp",
+  );
+  assert.equal(
+    normalizeStoragePath(
+      "https://example.supabase.co/storage/v1/object/sign/memorial-private-submissions/tributes/demo/profile/file.webp?token=123",
+      "memorial-private-submissions",
+    ),
+    "tributes/demo/profile/file.webp",
+  );
+  assert.equal(normalizeStoragePath("../escape.webp", "memorial-private-submissions"), null);
 });

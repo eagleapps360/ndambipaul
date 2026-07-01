@@ -2,7 +2,8 @@ import type { Metadata } from "next";
 import JsonLd from "@/components/JsonLd";
 import DevImageProbe from "@/components/DevImageProbe";
 import Header from "@/components/Header";
-import { getPublicSiteSettings } from "@/lib/content";
+import LivestreamNotice from "@/components/LivestreamNotice";
+import { getPublicSiteSettings, getPublishedLivestreams } from "@/lib/content";
 import { assertEnvironmentReady } from "@/lib/env";
 import { criticalMemorialImages } from "@/lib/public-image-fallbacks";
 import { buildPersonJsonLd, buildWebsiteJsonLd } from "@/lib/structured-data";
@@ -80,13 +81,14 @@ export const metadata: Metadata = {
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
   assertEnvironmentReady();
-  const site = await getPublicSiteSettings();
+  const [site, livestreams] = await Promise.all([getPublicSiteSettings(), getPublishedLivestreams()]);
 
   return (
     <html lang="en">
       <body>
         {process.env.NODE_ENV === "development" ? <DevImageProbe paths={criticalMemorialImages} /> : null}
         <Header brandLabel={site.shortTitle} />
+        <LivestreamNotice streams={livestreams} />
         {children}
         <JsonLd
           data={[

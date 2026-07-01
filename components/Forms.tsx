@@ -3,6 +3,8 @@
 import { FormEvent, useMemo, useState } from "react";
 import ImagePositionEditor from "@/components/media/ImagePositionEditor";
 import SubmissionSuccess, { type SubmissionSuccessProps } from "@/components/SubmissionSuccess";
+import { DONATION_CURRENCY, SUGGESTED_DONATION_AMOUNTS } from "@/lib/payments/currency";
+import { DONATION_METHODS, type DonationMethod } from "@/lib/payments/donation-methods";
 import { buildObjectPosition } from "@/lib/tribute-helpers";
 import { donationOptions, uploadRules } from "@/lib/ui-config";
 import type { TeamDefinition } from "@/lib/public-types";
@@ -440,10 +442,31 @@ export function MediaUploadForm() {
 }
 
 export function DonationForm() {
-  const [method, setMethod] = useState<(typeof donationOptions)[number]["method"]>("mobile-money");
+  const [method, setMethod] = useState<DonationMethod>(DONATION_METHODS.MOBILE_MONEY);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<SuccessState>(null);
   const [submitting, setSubmitting] = useState(false);
+  const [copyState, setCopyState] = useState<"idle" | "copied" | "failed">("idle");
+
+  async function copyMobileMoneyNumber() {
+    try {
+      if (navigator.clipboard?.writeText) {
+        await navigator.clipboard.writeText("675119804");
+      } else {
+        const input = document.createElement("input");
+        input.value = "675119804";
+        document.body.appendChild(input);
+        input.select();
+        document.execCommand("copy");
+        document.body.removeChild(input);
+      }
+      setCopyState("copied");
+      window.setTimeout(() => setCopyState("idle"), 2200);
+    } catch {
+      setCopyState("failed");
+      window.setTimeout(() => setCopyState("idle"), 2200);
+    }
+  }
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -451,7 +474,7 @@ export function DonationForm() {
     setError(null);
     const form = event.currentTarget;
     const formData = new FormData(form);
-    if (method === "card") {
+    if (method === DONATION_METHODS.CARD) {
       const payload = {
         amount: Number(formData.get("amount") || 0),
         name: formData.get("name"),
@@ -459,6 +482,7 @@ export function DonationForm() {
         phone: formData.get("phone"),
         anonymous: formData.get("anonymous") === "on",
         acknowledgement: formData.get("acknowledgement"),
+        note: formData.get("notes"),
       };
       const response = await fetch("/api/donations/checkout", {
         method: "POST",
@@ -483,7 +507,6 @@ export function DonationForm() {
       acknowledgement: formData.get("acknowledgement"),
       anonymous: formData.get("anonymous") === "on",
       method,
-      provider: formData.get("provider"),
       transactionReference: formData.get("transactionReference"),
       itemDescription: formData.get("itemDescription"),
       quantity: formData.get("quantity"),
@@ -501,15 +524,15 @@ export function DonationForm() {
       form.reset();
       setSuccess({
         title:
-          method === "mobile-money"
+          method === DONATION_METHODS.MOBILE_MONEY
             ? "Mobile Money declaration received"
-            : method === "cash"
+            : method === DONATION_METHODS.CASH
               ? "Cash support recorded"
               : "Donation pledge received",
         message:
-          method === "mobile-money"
+          method === DONATION_METHODS.MOBILE_MONEY
             ? "Thank you. Your transaction details have been recorded and will be verified by the family finance team."
-            : method === "cash"
+            : method === DONATION_METHODS.CASH
               ? "Thank you. Your cash donation declaration has been recorded for family verification."
               : "Thank you for your support. The family coordination team will review the items or services you offered.",
         reference: data.reference,
@@ -533,7 +556,12 @@ export function DonationForm() {
     <form className="form" onSubmit={handleSubmit}>
       <div className="methodTabs">
         {donationOptions.map((option) => (
-          <button key={option.method} type="button" className={method === option.method ? "active" : ""} onClick={() => setMethod(option.method)}>
+          <button
+            key={option.method}
+            type="button"
+            className={method === option.method ? "active" : ""}
+            onClick={() => setMethod(option.method as DonationMethod)}
+          >
             {option.title}
           </button>
         ))}
@@ -553,13 +581,31 @@ export function DonationForm() {
           Email
           <input name="email" type="email" />
         </label>
-        {(method === "mobile-money" || method === "card") && (
+        {(method === DONATION_METHODS.MOBILE_MONEY || method === DONATION_METHODS.CARD) && (
           <label>
-            Amount
-            <input name="amount" type="number" min="1" required />
+            Amount ({DONATION_CURRENCY})
+            <input name="amount" type="number" min="500" step="1" inputMode="numeric" required />
           </label>
         )}
       </div>
+      {(method === DONATION_METHODS.MOBILE_MONEY || method === DONATION_METHODS.CARD) ? (
+        <div className="filterOptions">
+          {SUGGESTED_DONATION_AMOUNTS.map((amount) => (
+            <button
+              key={amount}
+              type="button"
+              onClick={() => {
+                const input = document.querySelector<HTMLInputElement>('input[name="amount"]');
+                if (input) {
+                  input.value = String(amount);
+                }
+              }}
+            >
+              {amount.toLocaleString("en-US")} {DONATION_CURRENCY}
+            </button>
+          ))}
+        </div>
+      ) : null}
       <div className="formGrid">
         <label>
           Acknowledgement preference
@@ -573,22 +619,24 @@ export function DonationForm() {
           <input type="checkbox" name="anonymous" /> Display publicly as anonymous
         </label>
       </div>
-      {method === "mobile-money" ? (
+      {method === DONATION_METHODS.MOBILE_MONEY ? (
         <div className="infoBox">
-          <strong>Mobile Money placeholder details</strong>
-          <p>MTN Mobile Money and Orange Money numbers will be managed from site settings. Do not publish real account numbers until family approval is complete.</p>
+          <strong>MTN Mobile Money</strong>
+          <p>Send your contribution to the MTN Mobile Money number below. Please use your name as the payment reference where possible.</p>
+          <div className="submissionReference">
+            <span>Mobile Money number</span>
+            <strong>675 119 804</strong>
+            <span>Account name: Aphanyieck Akwi</span>
+            <button type="button" className="button light darkButton" onClick={copyMobileMoneyNumber}>
+              {copyState === "copied" ? "Mobile Money number copied" : "Copy number"}
+            </button>
+            {copyState === "failed" ? <small>Copy failed. Please copy the number manually.</small> : null}
+          </div>
         </div>
       ) : null}
-      {method === "mobile-money" ? (
+      {method === DONATION_METHODS.MOBILE_MONEY ? (
         <>
           <div className="formGrid">
-            <label>
-              Provider
-              <select name="provider" defaultValue="MTN Mobile Money">
-                <option>MTN Mobile Money</option>
-                <option>Orange Money</option>
-              </select>
-            </label>
             <label>
               Transaction reference
               <input name="transactionReference" required />
@@ -598,13 +646,17 @@ export function DonationForm() {
             Date sent
             <input type="date" name="sentAt" />
           </label>
+          <label>
+            Message or note
+            <textarea name="notes" rows={4} placeholder="Optional note, sender details, or payment reference context." />
+          </label>
         </>
       ) : null}
-      {method === "cash" ? (
+      {method === DONATION_METHODS.CASH ? (
         <>
           <label>
-            Amount
-            <input name="amount" type="number" min="0" />
+            Amount ({DONATION_CURRENCY})
+            <input name="amount" type="number" min="500" step="1" inputMode="numeric" />
           </label>
           <label>
             Cash handover note
@@ -612,7 +664,7 @@ export function DonationForm() {
           </label>
         </>
       ) : null}
-      {method === "kind" ? (
+      {method === DONATION_METHODS.KIND ? (
         <>
           <label>
             Item or service
@@ -634,14 +686,14 @@ export function DonationForm() {
           </label>
         </>
       ) : null}
-      {method === "card" ? (
+      {method === DONATION_METHODS.CARD ? (
         <div className="infoBox">
           <strong>Secure Stripe Checkout</strong>
           <p>Card status is reconciled server-side. The website should never trust client-reported payment success.</p>
         </div>
       ) : null}
       <button className="button" type="submit" disabled={submitting}>
-        {submitting ? "Submitting..." : method === "card" ? "Continue securely" : "Record my support"}
+        {submitting ? "Submitting..." : method === DONATION_METHODS.CARD ? "Continue securely" : "Record my support"}
       </button>
       <ErrorNotice message={error} />
     </form>
